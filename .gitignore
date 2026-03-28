@@ -1,0 +1,46 @@
+.DS_Store
+.cache
+npm-debug.log
+Thumbs.db
+node_modules/
+.build/
+.vscode/extensions/**/out/
+extensions/**/dist/
+/out*/
+/extensions/**/out/
+build/node_modules
+coverage/
+test_data/
+test-results/
+test-results.xml
+vscode.lsif
+vscode.db
+/.profile-oss
+/cli/target
+/cli/openssl
+product.overrides.json
+*.snap.actual
+.vscode-test
+
+# Void added these:
+.tmp/
+.tmp2/
+.tool-versions
+src/vs/workbench/contrib/void/browser/react/out/**
+src/vs/workbench/contrib/void/browser/react/src2/**
+
+# 原版本二进制文件（不需要提交到git）
+原版本exe/
+VoidSetup-x64-*.exe
+
+# 临时分析文档和脚本
+temp_*.md
+temp_*.py
+temp_*.json
+temp_*.txt
+
+# 包含敏感信息的文档
+文档/聚合API 接口对接.Apifox.json
+
+# GitHub workflows (需要特殊权限)
+.github/workflows/
