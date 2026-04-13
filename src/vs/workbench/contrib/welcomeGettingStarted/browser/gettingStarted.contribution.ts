@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 欢迎页面贡献点注册】
+ *  本文件注册欢迎页面的所有贡献点，包括命令、编辑器、配置等：
+ *
+ *  【核心职责】
+ *  1. 注册欢迎页面编辑器（GettingStartedPage）
+ *  2. 注册命令（workbench.action.openWalkthrough）
+ *  3. 注册编辑器序列化器（GettingStartedInputSerializer）
+ *  4. 注册启动页配置（workbench.startupEditor）
+ *  5. 注册快捷键绑定（Ctrl+Shift+Home）
+ *
+ *  【注册内容】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  编辑器注册                                             │
+ *  │  - GettingStartedPage: 欢迎页面编辑器实现               │
+ *  │  - GettingStartedInput: 编辑器输入模型                  │
+ *  │  - 序列化器: 保存和恢复编辑器状态                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  命令注册                                               │
+ *  │  - workbench.action.openWalkthrough: 打开欢迎页面       │
+ *  │  - workbench.action.openHomeDir: 打开主目录             │
+ *  │  - workbench.action.openWorkspaceSettingsFile: 打开工作区设置 │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  配置注册                                               │
+ *  │  - workbench.startupEditor: 启动编辑器设置              │
+ *  │    - welcomePage: 显示欢迎页面（默认）                  │
+ *  │    - newUntitledFile: 新建未命名文件                    │
+ *  │    - readme: 打开 README                                │
+ *  │    - welcomePageInEmptyWorkbench: 空工作台时显示欢迎页  │
+ *  │  - workbench.welcomePage.walkthroughs.openOnInstall: 安装后打开教程 │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【启动页配置】
+ *  - 注册 StartupPageEditorResolverContribution
+ *  - 注册 StartupPageRunnerContribution（在生命周期恢复阶段执行）
+ *
+ *  【快捷键】
+ *  - Ctrl+Shift+Home: 打开欢迎页面（默认未绑定）
+ *
+ *  【与 gettingStarted.ts 的关系】
+ *  - 本文件注册贡献点
+ *  - gettingStarted.ts 实现具体逻辑
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { localize, localize2 } from '../../../../nls.js';

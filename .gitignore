@@ -31,13 +31,25 @@ src/vs/workbench/contrib/void/browser/react/src2/**
 
 # 原版本二进制文件（不需要提交到git）
 原版本exe/
+claude-code-sourcemap-main/
 VoidSetup-x64-*.exe
 
 # 临时分析文档和脚本
-temp_*.md
-temp_*.py
-temp_*.json
-temp_*.txt
+temp-*
+temp_*
+check-dom.*
+
+# 编译日志和产物
+compile_*.log
+compile_*.txt
+*.log.bak
+
+# 二进制和压缩包
+*.exe
+*.zip
+*.msi
+*.dmg
+*.AppImage
 
 # 包含敏感信息的文档
 文档/聚合API 接口对接.Apifox.json

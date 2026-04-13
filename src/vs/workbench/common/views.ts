@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 视图系统核心接口】
+ *  本文件定义视图（View）和视图容器（View Container）的核心接口与注册表：
+ *
+ *  【核心职责】
+ *  1. 定义视图容器位置（侧边栏、面板、辅助栏）
+ *  2. 定义视图描述符（IViewDescriptor）
+ *  3. 提供视图注册表（ViewsRegistry）
+ *  4. 提供视图容器注册表（ViewContainersRegistry）
+ *  5. 支持视图上下文键和命令
+ *
+ *  【视图容器位置】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  ViewContainerLocation.Sidebar - 侧边栏（左侧）          │
+ *  │  例如：资源管理器、搜索、扩展、源代码管理               │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ViewContainerLocation.Panel - 面板（底部）               │
+ *  │  例如：终端、输出、调试控制台、问题                     │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ViewContainerLocation.AuxiliaryBar - 辅助栏（右侧）     │
+ *  │  例如：大纲、时间线、自定义视图                           │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IView: 单个视图接口
+ *  - IViewDescriptor: 视图描述符（元数据）
+ *  - IViewContainer: 视图容器接口
+ *  - IViewPaneContainer: 视图面板容器（容器实现）
+ *
+ *  【注册表】
+ *  - ViewContainersRegistry: 注册视图容器
+ *  - ViewsRegistry: 注册视图
+ *  - 扩展通过 registerWorkbenchContribution 注册视图
+ *
+ *  【使用场景】
+ *  - 注册新的侧边栏视图
+ *  - 创建自定义面板
+ *  - 管理视图可见性和顺序
+ *
+ *  【与 panecomposite.ts 的关系】
+ *  - panecomposite.ts 定义 IPaneComposite 接口
+ *  - 视图容器实现 IPaneComposite 接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../../editor/common/languages.js';

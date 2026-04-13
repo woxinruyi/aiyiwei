@@ -1,6 +1,61 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 原生主机服务接口】
+ *  本文件定义原生主机服务的核心接口，提供 Electron 主进程的桥接功能：
+ *
+ *  【核心职责】
+ *  1. 管理窗口生命周期（打开、关闭、焦点、最小化）
+ *  2. 提供系统信息（OS、CPU、内存）
+ *  3. 处理系统对话框（文件选择器、消息框）
+ *  4. 管理剪贴板操作
+ *  5. 提供 shell 功能（打开外部程序、托盘图标）
+ *  6. 处理更新和重启
+ *
+ *  【窗口管理】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  窗口操作                                               │
+ *  │  - openWindow(): 打开新窗口                           │
+ *  │  - closeWindow(): 关闭窗口                            │
+ *  │  - focusWindow(): 聚焦窗口                            │
+ *  │  - minimizeWindow(): 最小化                           │
+ *  │  - maximizeWindow(): 最大化                           │
+ *  │  - fullscreenWindow(): 全屏                           │
+ *  │  - setWindowZoomLevel(): 设置缩放                     │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【系统信息】
+ *  - IOSProperties: 操作系统信息（类型、版本、架构）
+ *  - ICPUProperties: CPU 信息（型号、速度）
+ *  - IOSStatistics: 系统统计（内存、负载）
+ *
+ *  【对话框】
+ *  - showOpenDialog(): 打开文件选择器
+ *  - showSaveDialog(): 保存文件选择器
+ *  - showMessageBox(): 显示消息框
+ *
+ *  【剪贴板】
+ *  - readClipboardText(): 读取剪贴板文本
+ *  - writeClipboardText(): 写入剪贴板文本
+ *
+ *  【Shell 功能】
+ *  - openExternal(): 打开外部链接/程序
+ *  - trash(): 移动到回收站
+ *
+ *  【使用场景】
+ *  - 文件打开/保存对话框
+ *  - 窗口管理（新建、关闭、切换）
+ *  - 系统信息收集（遥测）
+ *  - 剪贴板操作（复制/粘贴）
+ *  - 外部链接打开
+ *
+ *  【与 Electron 的关系】
+ *  - 本文件定义接口
+ *  - electron-sandbox 提供渲染进程实现
+ *  - electron-main 提供主进程实现
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { VSBuffer } from '../../../base/common/buffer.js';

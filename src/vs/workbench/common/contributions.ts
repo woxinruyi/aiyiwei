@@ -1,6 +1,52 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作台贡献点系统】
+ *  本文件定义工作台贡献点的核心机制，支持模块化的功能扩展和生命周期管理：
+ *
+ *  【核心职责】
+ *  1. 定义工作台贡献点接口（IWorkbenchContribution）
+ *  2. 提供贡献点注册机制（registerWorkbenchContribution2）
+ *  3. 管理贡献点生命周期阶段（WorkbenchPhase）
+ *  4. 支持延迟实例化（Lazy Contributions）
+ *  5. 处理贡献点的创建和销毁
+ *
+ *  【生命周期阶段】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  BlockStartup  - 启动开始阶段（阻塞）                   │
+ *  │  - 服务已准备就绪                                       │
+ *  │  - 会阻塞编辑器显示，慎用！                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  BlockRestore  - UI 恢复阶段（阻塞）                    │
+ *  │  - 窗口即将恢复 UI 状态                                 │
+ *  │  - 会阻塞编辑器显示，慎用！                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  AfterRestored - UI 恢复后（非阻塞）                    │
+ *  │  - UI 状态已恢复完成                                    │
+ *  │  - 推荐大多数贡献点使用此阶段                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Lazy          - 延迟加载（推荐）                       │
+ *  │  - 空闲时自动实例化                                     │
+ *  │  - 最适合非关键功能                                     │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - registerWorkbenchContribution2(): 注册贡献点（新 API）
+ *  - registerWorkbenchContribution(): 注册贡献点（旧 API，已弃用）
+ *  - WorkbenchPhase: 控制初始化时机
+ *
+ *  【使用场景】
+ *  - Void AI 模块注册（void.contribution.ts）
+ *  - 欢迎页面注册（gettingStarted.contribution.ts）
+ *  - 扩展系统初始化
+ *  - 编辑器功能注册
+ *
+ *  【与 LifecycleService 的关系】
+ *  - 贡献点阶段基于 LifecyclePhase 构建
+ *  - 确保在正确的生命周期时机执行
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IInstantiationService, IConstructorSignature, ServicesAccessor, BrandedService } from '../../platform/instantiation/common/instantiation.js';

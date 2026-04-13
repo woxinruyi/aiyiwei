@@ -1,6 +1,46 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 扩展特性注册表】
+ *  本文件定义扩展详情页中特性展示的渲染系统，支持多种数据格式渲染：
+ *
+ *  【核心职责】
+ *  1. 定义扩展特性渲染器接口（IExtensionFeatureRenderer）
+ *  2. 支持 Markdown 格式渲染（IExtensionFeatureMarkdownRenderer）
+ *  3. 支持表格格式渲染（IExtensionFeatureTableRenderer）
+ *  4. 管理扩展特性注册表（ExtensionFeaturesRegistry）
+ *  5. 处理扩展清单数据的渲染和展示
+ *
+ *  【渲染器类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Markdown 渲染器                                         │
+ *  │  - 渲染 Markdown 格式的特性描述                          │
+ *  │  - 支持富文本和链接                                      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Table 渲染器                                            │
+ *  │  - 渲染表格数据                                          │
+ *  │  - 支持快捷键、颜色等复杂数据                            │
+ *  │  - 表头和行数据自定义                                    │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IExtensionFeatureRenderer: 基础渲染器接口
+ *  - IExtensionFeatureMarkdownRenderer: Markdown 渲染器
+ *  - IExtensionFeatureTableRenderer: 表格渲染器
+ *  - IRenderedData<T>: 渲染数据包装器
+ *
+ *  【数据类型】
+ *  - IRowData: 表格行数据（支持字符串、Markdown、快捷键、颜色）
+ *  - ITableData: 表格数据（表头 + 行数据）
+ *
+ *  【使用场景】
+ *  - 扩展详情页展示特性（Feature Contributions）
+ *  - 快捷键绑定展示
+ *  - 设置项展示
+ *  - 自定义扩展信息展示
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IMarkdownString } from '../../../../base/common/htmlContent.js';

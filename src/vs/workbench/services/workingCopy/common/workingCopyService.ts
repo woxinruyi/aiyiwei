@@ -1,6 +1,43 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作副本服务实现】
+ *  本文件实现工作副本服务的具体逻辑，管理工作副本的注册和生命周期：
+ *
+ *  【核心职责】
+ *  1. 注册和注销工作副本（register/unregister）
+ *  2. 跟踪工作副本的脏状态变化
+ *  3. 管理工作副本内容变更事件
+ *  4. 提供工作副本查找功能（get, has）
+ *  5. 支持工作副本保存事件通知
+ *
+ *  【事件系统】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  onDidRegister: 工作副本注册事件                        │
+ *  │  onDidUnregister: 工作副本注销事件                      │
+ *  │  onDidChangeDirty: 脏状态变更事件                       │
+ *  │  onDidChangeContent: 内容变更事件                       │
+ *  │  onWillSave: 保存前事件                                 │
+ *  │  onDidSave: 保存后事件                                  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【工作副本管理】
+ *  - 使用 ResourceMap 存储工作副本
+ *  - 通过 URI 标识工作副本
+ *  - 支持多个工作副本同时存在
+ *
+ *  【使用场景】
+ *  - 编辑器创建时注册工作副本
+ *  - 编辑器关闭时注销工作副本
+ *  - 监听保存事件进行备份清理
+ *  - 获取所有脏工作副本（保存所有）
+ *
+ *  【与 workingCopy.ts 的关系】
+ *  - workingCopy.ts 定义接口
+ *  - 本文件实现服务逻辑
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';

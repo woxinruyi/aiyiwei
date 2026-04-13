@@ -1,6 +1,66 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 标记服务接口】
+ *  本文件定义标记（Marker）服务接口，负责管理代码诊断、错误、警告等信息：
+ *
+ *  【核心职责】
+ *  1. 管理代码标记（错误、警告、信息、提示）
+ *  2. 支持按资源（URI）和所有者分类管理
+ *  3. 提供标记统计信息
+ *  4. 支持标记变更事件
+ *  5. 资源过滤功能
+ *
+ *  【标记概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  标记表示代码中的诊断信息：                             │
+ *  │  - 错误（Error）：编译错误、语法错误                   │
+ *  │  - 警告（Warning）：潜在问题                             │
+ *  │  - 信息（Info）：代码提示                                │
+ *  │  - 提示（Hint）：风格建议                                │
+ *  │                                                          │
+ *  │  来源（Owner）：                                         │
+ *  │  - TypeScript 语言服务器                                │
+ *  │  - ESLint 扩展                                          │
+ *  │  - 其他诊断提供者                                         │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【标记严重性】
+ *  - Hint (1): 轻微提示
+ *  - Info (2): 信息性消息
+ *  - Warning (4): 警告
+ *  - Error (8): 错误
+ *
+ *  【标记标签】
+ *  - Unnecessary: 不必要的代码
+ *  - Deprecated: 已弃用的 API
+ *
+ *  【核心接口】
+ *  - IMarkerService: 标记服务接口
+ *  - IMarkerData: 标记数据结构
+ *  - IRelatedInformation: 相关信息
+ *  - IResourceMarker: 资源标记
+ *
+ *  【核心方法】
+ *  - changeOne(owner, resource, markers): 修改单个资源的标记
+ *  - changeAll(owner, data): 批量修改标记
+ *  - read(filter): 读取标记（支持过滤）
+ *  - remove(owner, resources): 删除标记
+ *  - getStatistics(): 获取统计信息
+ *
+ *  【使用场景】
+ *  - 问题面板显示诊断信息
+ *  - 编辑器内联错误显示
+ *  - F8 导航到下一个错误
+ *  - 构建任务输出解析
+ *  - 扩展贡献诊断
+ *
+ *  【与 markerService.ts 的关系】
+ *  - 本文件定义接口
+ *  - markerService.ts 提供实现
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Event } from '../../../base/common/event.js';

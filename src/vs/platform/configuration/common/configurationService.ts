@@ -1,6 +1,47 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 配置服务实现】
+ *  本文件实现 VSCode/Void 的配置管理系统，负责：
+ *
+ *  【核心职责】
+ *  1. 加载和管理多层配置（默认、用户、工作区、策略）
+ *  2. 提供配置读取接口（getValue, inspect）
+ *  3. 处理配置更新（updateValue）
+ *  4. 触发配置变更事件（onDidChangeConfiguration）
+ *  5. 支持配置覆盖和继承
+ *
+ *  【配置层次】（优先级从高到低）
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  1. 策略配置 (Policy)     - 企业策略强制设置            │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  2. 内存配置 (Memory)     - 运行时临时设置               │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  3. 工作区配置 (Workspace) - .vscode/settings.json      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  4. 用户配置 (User)       - ~/settings.json             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  5. 默认配置 (Default)    - 产品默认设置                │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【关键方法】
+ *  - getValue(key): 获取配置值（自动合并多层）
+ *  - inspect(key): 检查配置的详细来源
+ *  - updateValue(key, value, target): 更新配置
+ *  - onDidChangeConfiguration: 监听配置变更事件
+ *
+ *  【使用场景】
+ *  - 启动页配置: workbench.startupEditor → startupPage.ts
+ *  - 语言配置: workbench.locale → localeService.ts
+ *  - 主题配置: workbench.colorTheme → themeService.ts
+ *
+ *  【与启动页的关系】
+ *  - startupPage.ts 调用 configurationService.getValue('workbench.startupEditor')
+ *  - 决定启动时显示欢迎页面还是新建文件
+ *  - 支持配置变更热更新（无需重启）
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { distinct, equals as arrayEquals } from '../../../base/common/arrays.js';

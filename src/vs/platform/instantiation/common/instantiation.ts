@@ -1,6 +1,41 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 依赖注入系统核心】
+ *  本文件实现 VSCode/Void 的依赖注入（DI）系统，提供服务注册、解析和生命周期管理：
+ *
+ *  【核心职责】
+ *  1. 定义服务标识符（ServiceIdentifier）
+ *  2. 实现服务装饰器（createDecorator）
+ *  3. 提供服务访问器（ServicesAccessor）
+ *  4. 实现服务集合（ServiceCollection）
+ *  5. 管理服务的依赖关系
+ *
+ *  【依赖注入架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  createDecorator<T>(id) - 创建服务装饰器               │
+ *  │  ├─ 生成唯一服务标识符                                  │
+ *  │  ├─ 附加到类构造函数                                    │
+ *  │  └─ 注入到构造函数参数                                  │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ServiceCollection - 服务集合                          │
+ *  │  ├─ set(id, instance): 注册服务实例                     │
+ *  │  ├─ get(id): 获取服务实例                               │
+ *  │  └─ 管理所有服务的生命周期                              │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  IInstantiationService - 实例化服务                    │
+ *  │  ├─ createInstance(ctor, ...args): 创建服务实例         │
+ *  │  ├─ invokeFunction(fn, ...args): 调用函数并注入服务       │
+ *  │  └─ 自动解析和注入依赖                                  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用场景】
+ *  - 注册服务: registerSingleton(IMyService, MyService)
+ *  - 使用服务: constructor(@IMyService private myService: IMyService)
+ *  - 创建实例: instantiationService.createInstance(MyClass)
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { DisposableStore } from '../../../base/common/lifecycle.js';

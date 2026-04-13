@@ -2,6 +2,42 @@
 /*--------------------------------------------------------------------------------------
  *  Copyright 2025 Glass Devtools, Inc. All rights reserved.
  *  Licensed under the Apache License, Version 2.0. See LICENSE.txt for more information.
+ *
+ *  【业务逻辑说明 - Void 设置类型定义】
+ *  本文件定义 Void 设置服务的类型系统，负责 AI 提供商和模型的类型定义：
+ *
+ *  【核心职责】
+ *  1. 定义 ProviderName 类型 - 支持的 AI 提供商名称
+ *  2. 区分本地和云端提供商
+ *  3. 定义模型信息类型（VoidStatefulModelInfo）
+ *  4. 定义提供商设置结构（SettingsAtProvider）
+ *  5. 管理自定义设置名称
+ *
+ *  【提供商分类】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  本地提供商（Local Providers）                          │
+ *  │  ├─ ollama - 本地 Ollama 部署                           │
+ *  │  ├─ vLLM - 本地 vLLM 部署                             │
+ *  │  └─ lmStudio - LM Studio 本地模型                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  云端提供商（Cloud Providers）                          │
+ *  │  ├─ anthropic - Claude API                              │
+ *  │  ├─ openAI - GPT API                                    │
+ *  │  ├─ gemini - Google Gemini API                          │
+ *  │  └─ 其他云端服务...                                     │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心类型】
+ *  - ProviderName: 提供商名称联合类型
+ *  - VoidStatefulModelInfo: 模型信息（名称、类型、是否隐藏）
+ *  - SettingsAtProvider<T>: 特定提供商的设置
+ *  - SettingsOfProvider: 所有提供商的设置映射
+ *
+ *  【与 voidSettingsService.ts 的关系】
+ *  - 本文件定义类型
+ *  - voidSettingsService.ts 使用这些类型实现服务
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------*/
 
 import { defaultModelsOfProvider, defaultProviderSettings, ModelOverrides } from './modelCapabilities.js';

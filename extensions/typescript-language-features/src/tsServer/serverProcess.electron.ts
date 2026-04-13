@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { Disposable } from '../utils/dispose';
 import { API } from './api';
-import type * as Proto from './protocol/protocol';
+import Proto from './protocol/protocol';
 import { TsServerLog, TsServerProcess, TsServerProcessFactory, TsServerProcessKind } from './server';
 import { TypeScriptVersionManager } from './versionManager';
 import { TypeScriptVersion } from './versionProvider';

@@ -3,15 +3,21 @@
 	"compilerOptions": {
 		"outDir": "./out",
 		"experimentalDecorators": true,
+		"types": ["node"],
 		"typeRoots": [
 			"./node_modules/@types"
 		],
 		"lib": [
+			"ES2020",
+			"DOM",
 			"WebWorker"
 		]
 	},
 	"include": [
 		"src/**/*",
 		"../../src/vscode-dts/vscode.d.ts"
+	],
+	"exclude": [
+		"**/test/**/*"
 	]
 }

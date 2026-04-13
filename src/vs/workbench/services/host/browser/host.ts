@@ -1,6 +1,42 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 主机服务接口】
+ *  本文件定义主机服务的核心接口，管理窗口焦点、打开操作和重启功能：
+ *
+ *  【核心职责】
+ *  1. 管理窗口焦点状态（onDidChangeFocus, hasFocus）
+ *  2. 支持打开文件夹/工作区/文件（openWindow）
+ *  3. 支持打开空窗口（openEmptyWindow）
+ *  4. 提供窗口关闭控制（closeWindow, quit）
+ *  5. 支持应用重启（restart, reload）
+ *
+ *  【核心方法】
+ *  - hadLastFocus(): 检查窗口是否最后获得焦点
+ *  - focus(options): 将窗口带到前台并聚焦
+ *  - openWindow(toOpen, options): 打开文件夹/工作区/文件
+ *  - openEmptyWindow(options): 打开新空窗口
+ *  - toggleFullScreen(): 切换全屏模式
+ *  - restart(): 重启应用
+ *  - reload(): 重新加载窗口
+ *
+ *  【与语言设置的关系】
+ *  - 语言设置更改后需要重启应用
+ *  - localeService.ts 调用 hostService.restart() 重启
+ *  - 重启后读取新的 argv.json 配置
+ *
+ *  【使用场景】
+ *  - 语言切换后重启应用
+ *  - 打开文件夹时创建新窗口
+ *  - 全屏模式切换
+ *  - 窗口聚焦控制
+ *
+ *  【平台差异】
+ *  - 浏览器环境: 使用 IHostService
+ *  - 原生环境: 使用 INativeHostService（扩展接口）
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { VSBuffer } from '../../../../base/common/buffer.js';

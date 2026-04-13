@@ -1,6 +1,52 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 上下文键服务】
+ *  本文件实现上下文键（Context Key）系统，用于控制命令、菜单、快捷键的上下文条件：
+ *
+ *  【核心职责】
+ *  1. 定义上下文键表达式（ContextKeyExpr）- 布尔逻辑表达式
+ *  2. 管理上下文键值（ContextKeyValue）- 字符串、数字、布尔值
+ *  3. 提供上下文键求值（evaluate）
+ *  4. 支持上下文键表达式序列化和反序列化
+ *
+ *  【上下文键用途】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  命令 when 子句                                         │
+ *  │  "command": "editor.action.commentLine",               │
+ *  │  "when": "editorTextFocus && !editorReadonly"            │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  菜单可见性                                             │
+ *  │  "menu": {                                             │
+ *  │    "when": "explorerViewletVisible"                      │
+ *  │  }                                                      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  快捷键绑定                                             │
+ *  │  "keybinding": {                                       │
+ *  │    "when": "editorTextFocus"                             │
+ *  │  }                                                      │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【内置常量上下文键】
+ *  - isMac, isLinux, isWindows: 操作系统平台
+ *  - isWeb: 是否 Web 环境
+ *  - isChrome, isFirefox, isEdge, isSafari: 浏览器类型
+ *
+ *  【上下文键表达式类型】
+ *  - Defined: 键已定义
+ *  - Not: 逻辑非
+ *  - Equals: 等于
+ *  - NotEquals: 不等于
+ *  - And: 逻辑与
+ *  - Or: 逻辑或
+ *  - Regex: 正则匹配
+ *
+ *  【与欢迎页面的关系】
+ *  - 欢迎页面按钮可用性控制
+ *  - 上下文敏感的开始项显示
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CharCode } from '../../../base/common/charCode.js';

@@ -1,6 +1,48 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 链接打开服务】
+ *  本文件定义链接打开服务的核心接口，负责处理各种 URI 的打开操作：
+ *
+ *  【核心职责】
+ *  1. 打开内部资源（文件、编辑器）
+ *  2. 打开外部链接（浏览器、邮件）
+ *  3. 处理命令链接（command: 协议）
+ *  4. 支持自定义打开器（Contributed Openers）
+ *
+ *  【打开方式】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  内部打开（OpenInternalOptions）                        │
+ *  │  - openToSide: 在侧边打开编辑器                         │
+ *  │  - editorOptions: 编辑器选项                            │
+ *  │  - fromUserGesture: 是否来自用户手势                    │
+ *  │  - allowCommands: 允许命令链接                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  外部打开（OpenExternalOptions）                        │
+ *  │  - openExternal: 使用外部程序打开                         │
+ *  │  - allowTunneling: 允许隧道连接                         │
+ *  │  - allowContributedOpeners: 允许扩展贡献的打开器          │
+ *  │  - fromWorkspace: 是否来自工作区                        │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【支持的 URI 协议】
+ *  - file:// - 本地文件
+ *  - http://, https:// - 网页链接
+ *  - command:// - 执行命令
+ *  - vscode:// - VSCode 内部链接
+ *
+ *  【使用场景】
+ *  - 点击 Markdown 中的链接
+ *  - 欢迎页面开始项跳转
+ *  - 终端中的文件链接
+ *  - 浏览器外部链接
+ *
+ *  【与欢迎页面的关系】
+ *  - 欢迎页面的开始项通过 openerService 打开文件/链接
+ *  - 教程中的链接跳转
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../../base/common/cancellation.js';

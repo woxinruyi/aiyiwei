@@ -8,7 +8,7 @@ import { Command, CommandManager } from '../commands/commandManager';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { TelemetryReporter } from '../logging/telemetry';
 import * as fixNames from '../tsServer/protocol/fixNames';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import { nulToken } from '../utils/cancellation';

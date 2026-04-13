@@ -345,14 +345,14 @@ export function getJavaScriptMode(documentRegions: LanguageModelCache<HTMLDocume
 			const formatSettings = convertOptions(formatParams, formatterSettings, initialIndentLevel + 1);
 			const start = jsDocument.offsetAt(range.start);
 			let end = jsDocument.offsetAt(range.end);
-			let lastLineRange = null;
+			let lastLineRange: Range | null = null;
 			if (range.end.line > range.start.line && (range.end.character === 0 || isWhitespaceOnly(jsDocument.getText().substr(end - range.end.character, range.end.character)))) {
 				end -= range.end.character;
 				lastLineRange = Range.create(Position.create(range.end.line, 0), range.end);
 			}
 			const edits = jsLanguageService.getFormattingEditsForRange(jsDocument.uri, start, end, formatSettings);
 			if (edits) {
-				const result = [];
+				const result: TextEdit[] = [];
 				for (const edit of edits) {
 					if (edit.span.start >= start && edit.span.start + edit.span.length <= end) {
 						result.push({

@@ -1,6 +1,56 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 默认账户服务】
+ *  本文件实现默认账户服务，管理用户的 VS Code 账户状态和订阅信息：
+ *
+ *  【核心职责】
+ *  1. 管理用户账户状态（未初始化/不可用/可用）
+ *  2. 查询用户订阅信息（免费/专业版）
+ *  3. 管理 AI 功能配额（聊天次数、代码补全次数）
+ *  4. 提供账户相关的上下文键
+ *  5. 支持 Copilot/AI 功能的权限控制
+ *
+ *  【账户类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  免费用户（Limited）                                    │
+ *  │  - 有限的聊天配额（limited_user_quotas.chat）          │
+ *  │  - 有限的补全配额（limited_user_quotas.completions）  │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  专业版用户（Enterprise/Pro）                         │
+ *  │  - 更高的月度配额（monthly_quotas）                   │
+ *  │  - 优先访问新功能                                       │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【账户状态】
+ *  - Uninitialized: 尚未初始化
+ *  - Unavailable: 账户不可用
+ *  - Available: 账户可用
+ *
+ *  【核心接口】
+ *  - IDefaultAccount: 账户信息接口
+ *  - CONTEXT_DEFAULT_ACCOUNT_STATE: 账户状态上下文键
+ *  - DefaultAccountStatus: 状态枚举
+ *
+ *  【账户属性】
+ *  - sessionId: 会话标识
+ *  - enterprise: 是否企业用户
+ *  - chat_enabled: 是否启用聊天功能
+ *  - analytics_tracking_id: 分析跟踪 ID
+ *  - quotas: 功能配额限制
+ *
+ *  【使用场景】
+ *  - 状态栏显示账户状态
+ *  - 控制 AI 功能可用性
+ *  - 显示配额使用情况
+ *  - 升级到专业版的提示
+ *
+ *  【与 authentication.ts 的关系】
+ *  - 使用认证服务获取用户会话
+ *  - 与 GitHub/Microsoft 账户关联
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';

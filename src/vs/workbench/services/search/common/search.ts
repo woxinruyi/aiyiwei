@@ -1,6 +1,66 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 搜索服务接口】
+ *  本文件定义搜索服务的核心接口，提供全文搜索和文件搜索功能：
+ *
+ *  【核心职责】
+ *  1. 提供文本搜索（textSearch）- 在工作区文件中搜索内容
+ *  2. 支持 AI 辅助搜索（aiTextSearch）- 智能语义搜索
+ *  3. 管理文件搜索和排除模式
+ *  4. 支持搜索进度回调和取消操作
+ *  5. 提供搜索结果的分页和限制
+ *
+ *  【搜索类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  文本搜索（Text Search）                                 │
+ *  │  - 在文件中搜索字符串或正则表达式                        │
+ *  │  - 支持大小写敏感/不敏感                                │
+ *  │  - 支持全字匹配                                          │
+ *  │  - 搜索结果高亮显示                                      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  文件搜索（File Search）                                 │
+ *  │  - 按名称查找文件                                        │
+ *  │  - 支持通配符模式（glob）                               │
+ *  │  - 快速打开文件（Ctrl+P）                               │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  AI 搜索（AI Text Search）                               │
+ *  │  - 语义理解搜索                                          │
+ *  │  - 自然语言查询                                          │
+ *  │  - 需要 AI 扩展支持                                      │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - ISearchService: 搜索服务接口
+ *  - ITextQuery: 文本搜索查询参数
+ *  - IFileQuery: 文件搜索查询参数
+ *  - ISearchComplete: 搜索结果
+ *  - ISearchProgressItem: 搜索进度项
+ *
+ *  【核心方法】
+ *  - textSearch(query, token, onProgress): 执行文本搜索
+ *  - aiTextSearch(query, token, onProgress): 执行 AI 搜索
+ *  - fileSearch(query, token): 执行文件搜索
+ *  - textSearchSplitSyncAsync(): 同步+异步混合搜索
+ *
+ *  【搜索配置】
+ *  - VIEWLET_ID: 'workbench.view.search' - 搜索视图 ID
+ *  - SEARCH_RESULT_LANGUAGE_ID: 'search-result' - 搜索结果语言 ID
+ *  - DEFAULT_MAX_SEARCH_RESULTS: 20000 - 默认最大结果数
+ *
+ *  【使用场景】
+ *  - 工作区搜索（Ctrl+Shift+F）
+ *  - 快速打开文件（Ctrl+P）
+ *  - 搜索编辑器（Ctrl+Shift+T）
+ *  - 查找所有引用
+ *  - 符号搜索
+ *
+ *  【与 fileService.ts 的关系】
+ *  - 使用文件服务获取文件列表
+ *  - 支持文件内容搜索
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { mapArrayOrNot } from '../../../../base/common/arrays.js';

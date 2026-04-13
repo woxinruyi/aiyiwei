@@ -1,6 +1,53 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 命令服务接口】
+ *  本文件定义命令服务的核心接口，是 VSCode 命令系统的中央枢纽：
+ *
+ *  【核心职责】
+ *  1. 注册命令（registerCommand）- 将命令 ID 映射到处理函数
+ *  2. 执行命令（executeCommand）- 调用指定命令并返回结果
+ *  3. 管理命令生命周期 - 支持命令覆盖和注销
+ *  4. 提供命令事件 - 执行前/后通知
+ *  5. 支持命令参数验证
+ *
+ *  【命令系统架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │               ICommandService (接口)                    │
+ *  │                      ↑ 实现                             │
+ *  │              CommandService (实现类)                     │
+ *  │                      ↑ 管理                             │
+ *  │         ┌────────────┴────────────┐                     │
+ *  │         │                          │                     │
+ *  │    命令注册表                      命令执行队列          │
+ *  │    (id → handler)                  (异步执行)           │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【命令结构】
+ *  - commandId: 命令唯一标识（如 'workbench.action.openWalkthrough'）
+ *  - handler: 命令处理函数（接收 ServicesAccessor 和参数）
+ *  - metadata: 命令元数据（描述、参数定义等）
+ *
+ *  【核心方法】
+ *  - registerCommand(id, handler): 注册命令
+ *  - executeCommand(id, ...args): 执行命令
+ *  - hasCommand(id): 检查命令是否存在
+ *  - unregisterCommand(id): 注销命令
+ *
+ *  【使用场景】
+ *  - 命令面板（Ctrl+Shift+P）调用命令
+ *  - 快捷键绑定执行命令
+ *  - 菜单项点击执行命令
+ *  - 扩展贡献新命令
+ *  - 欢迎页面开始项执行命令
+ *
+ *  【与欢迎页面的关系】
+ *  - 欢迎页面的开始项通过命令 ID 触发操作
+ *  - 语言选择按钮执行 'workbench.action.configureLocale' 命令
+ *  - 打开文件夹执行 'vscode.openFolder' 命令
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Emitter, Event } from '../../../base/common/event.js';

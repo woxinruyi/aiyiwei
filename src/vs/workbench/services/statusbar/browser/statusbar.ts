@@ -1,6 +1,43 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 状态栏服务接口】
+ *  本文件定义状态栏服务的核心接口，负责管理工作台底部状态栏的显示和交互：
+ *
+ *  【核心职责】
+ *  1. 管理状态栏条目的添加、更新和删除
+ *  2. 支持左右对齐（StatusbarAlignment.LEFT/RIGHT）
+ *  3. 提供悬停提示和命令执行
+ *  4. 支持辅助状态栏（Auxiliary Statusbar）
+ *  5. 管理状态栏优先级和位置
+ *
+ *  【状态栏对齐】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  [LEFT] 左对齐区域                    [RIGHT] 右对齐区域 │
+ *  │  - 分支信息                            - 编码格式       │
+ *  │  - 行号/列号                           - 换行符类型     │
+ *  │  - 语言模式                            - 缩进设置       │
+ *  │  - Git 状态                            - 通知图标       │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IStatusbarService: 状态栏服务接口
+ *  - IStatusbarEntry: 状态栏条目
+ *  - IStatusbarEntryLocation: 条目位置信息
+ *  - StatusbarAlignment: 对齐方式枚举
+ *
+ *  【使用场景】
+ *  - 显示当前 Git 分支
+ *  - 显示光标位置和文档信息
+ *  - 显示语言服务器状态
+ *  - 扩展贡献自定义状态项
+ *
+ *  【与 statusbarPart.ts 的关系】
+ *  - statusbarPart.ts 实现状态栏 UI 部件
+ *  - 本文件定义服务接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';

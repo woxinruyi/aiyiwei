@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import * as languageIds from '../configuration/languageIds';
 import { API } from '../tsServer/api';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import FileConfigurationManager from './fileConfigurationManager';

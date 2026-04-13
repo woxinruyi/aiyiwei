@@ -1,6 +1,53 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 扩展服务抽象基类】
+ *  本文件实现扩展服务的抽象基类，负责扩展系统的核心生命周期管理：
+ *
+ *  【核心职责】
+ *  1. 管理扩展主机进程（Extension Host）生命周期
+ *  2. 处理扩展激活事件（Activation Events）
+ *  3. 管理扩展贡献点（Contributions）注册和解析
+ *  4. 处理扩展启用/禁用状态
+ *  5. 管理远程扩展的扫描和加载
+ *
+ *  【扩展生命周期】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  1. 扫描扩展（Scan Extensions）                        │
+ *  │     - 内置扩展、用户扩展、开发扩展                     │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  2. 解析清单（Parse Manifests）                        │
+ *  │     - 验证 package.json 格式                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  3. 确定运行位置（Determine Running Location）         │
+ *  │     - 本地进程、Web Worker、远程                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  4. 启动扩展主机（Start Extension Host）               │
+ *  │     - 创建 Node.js 或 Web Worker 进程                 │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  5. 激活扩展（Activate Extensions）                      │
+ *  │     - 按需激活（onCommand, onLanguage 等）            │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【扩展激活事件】
+ *  - onStartupFinished: 启动完成后
+ *  - onCommand: 命令触发时
+ *  - onLanguage: 语言文件打开时
+ *  - workspaceContains: 工作区包含特定文件时
+ *
+ *  【核心方法】
+ *  - startExtensionHosts(): 启动所有扩展主机
+ *  - activateByEvent(): 按事件激活扩展
+ *  - stopExtensionHosts(): 停止所有扩展主机
+ *  - whenInstalledExtensionsRegistered(): 等待扩展注册完成
+ *
+ *  【使用场景】
+ *  - 应用启动时初始化扩展系统
+ *  - 安装/卸载扩展后重启扩展主机
+ *  - 处理扩展崩溃和恢复
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Barrier } from '../../../../base/common/async.js';

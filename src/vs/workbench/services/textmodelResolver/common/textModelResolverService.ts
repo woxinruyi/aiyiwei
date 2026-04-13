@@ -1,6 +1,64 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文本模型解析服务】
+ *  本文件实现文本模型解析服务，负责将 URI 解析为可编辑的文本模型：
+ *
+ *  【核心职责】
+ *  1. 将 URI 解析为文本模型（ITextModel）
+ *  2. 管理模型引用计数（Reference Counting）
+ *  3. 支持内容提供者注册（IContentProvider）
+ *  4. 处理不同 scheme 的资源（file, inMemory, untitled 等）
+ *  5. 协调文本文件服务和未命名文件服务
+ *
+ *  【模型解析流程】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  1. 接收 URI                                             │
+ *  │     └─ 如 file:///path/to/file.ts                      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  2. 检查 scheme 类型                                     │
+ *  │     └─ file: 使用 TextFileService                      │
+ *  │     └─ inMemory: 使用 ModelService 缓存                │
+ *  │     └─ untitled: 使用 UntitledTextEditorService        │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  3. 创建或获取模型                                       │
+ *  │     └─ 引用计数 +1                                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  4. 返回模型引用                                         │
+ *  │     └─ 释放时引用计数 -1                                 │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【引用计数管理】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  ResourceModelCollection 管理模型生命周期：               │
+ *  │  - createReferencedObject(): 创建模型                   │
+ *  │  - destroyReferencedObject(): 销毁模型                │
+ *  │  - 引用计数为 0 时自动清理                               │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心类】
+ *  - ResourceModelCollection: 资源模型集合（引用计数管理）
+ *  - TextModelResolverService: 服务实现类
+ *
+ *  【支持的 URI Scheme】
+ *  - file: 本地文件系统
+ *  - inMemory: 内存中的临时模型
+ *  - untitled: 未命名文件
+ *  - vscode-remote: 远程文件
+ *  - 自定义 scheme（通过内容提供者）
+ *
+ *  【使用场景】
+ *  - 编辑器打开文件时解析模型
+ *  - 搜索服务获取文件内容
+ *  - 差异编辑器比较文件
+ *  - 预览编辑器显示内容
+ *
+ *  【与 resolverService.ts 的关系】
+ *  - 实现 editor/common/services/resolverService 中的接口
+ *  - ITextModelService.createModelReference() 的主要实现
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { URI } from '../../../../base/common/uri.js';

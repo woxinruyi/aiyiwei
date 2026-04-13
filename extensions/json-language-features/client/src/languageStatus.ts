@@ -114,9 +114,9 @@ function showSchemaList(input: ShowSchemasInput) {
 	const extensionSchemaAssocations = getExtensionSchemaAssociations();
 	const settingsSchemaAssocations = getSettingsSchemaAssociations(input.uri);
 
-	const extensionEntries = [];
-	const settingsEntries = [];
-	const otherEntries = [];
+	const extensionEntries: ShowSchemasItem[] = [];
+	const settingsEntries: ShowSchemasItem[] = [];
+	const otherEntries: ShowSchemasItem[] = [];
 
 	for (const schemaUri of input.schemas) {
 		const extensionEntry = extensionSchemaAssocations.findExtension(schemaUri);

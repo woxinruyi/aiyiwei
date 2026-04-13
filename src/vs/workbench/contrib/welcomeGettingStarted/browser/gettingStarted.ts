@@ -1,6 +1,31 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明】
+ *  本文件是欢迎页面的核心实现，负责：
+ *  1. 构建欢迎页面 UI（分类滑块、开始列表、最近打开、入门教程）
+ *  2. 处理用户交互（点击开始项、语言选择、教程导航）
+ *  3. 管理页面状态（当前分类、步骤、滚动位置）
+ *  4. 支持多语言切换（showLanguageSelector 方法）
+ *  5. 与编辑器服务集成，作为特殊的编辑器输入
+ *
+ *  【核心方法】
+ *  - buildCategoriesSlide(): 构建分类滑块页面
+ *  - buildStartList(): 构建开始列表（Start 区域）
+ *  - buildRecentlyOpenedList(): 构建最近打开文件列表
+ *  - showLanguageSelector(): 显示语言选择器 QuickPick
+ *  - registerDispatchListeners(): 注册事件监听器
+ *
+ *  【事件处理】
+ *  - x-dispatch 属性：用于分发命令
+ *  - selectLanguage: 语言选择按钮点击
+ *  - openLink: 打开外部链接
+ *
+ *  【修改历史】
+ *  - 2026-04-02: 添加业务逻辑注释
+ *  - 添加多语言选择器功能（language-button）
+ *  - 修改 Start 标题为 "Start 亦为"
  *--------------------------------------------------------------------------------------------*/
 
 import { $, Dimension, addDisposableListener, append, clearNode, reset } from '../../../../base/browser/dom.js';
@@ -43,7 +68,7 @@ import { INotificationService } from '../../../../platform/notification/common/n
 import { Link } from '../../../../platform/opener/browser/link.js';
 import { IOpenerService } from '../../../../platform/opener/common/opener.js';
 import { IProductService } from '../../../../platform/product/common/productService.js';
-import { IQuickInputService } from '../../../../platform/quickinput/common/quickInput.js';
+import { IQuickInputService, IQuickPickSeparator } from '../../../../platform/quickinput/common/quickInput.js';
 import { IStorageService, StorageScope, StorageTarget, WillSaveStateReason } from '../../../../platform/storage/common/storage.js';
 import { ITelemetryService, TelemetryLevel, firstSessionDateStorageKey } from '../../../../platform/telemetry/common/telemetry.js';
 import { getTelemetryLevel } from '../../../../platform/telemetry/common/telemetryUtils.js';
@@ -51,6 +76,8 @@ import { defaultButtonStyles, defaultKeybindingLabelStyles, defaultToggleStyles 
 import { IWindowOpenable } from '../../../../platform/window/common/window.js';
 import { IWorkspaceContextService, UNKNOWN_EMPTY_WINDOW_WORKSPACE } from '../../../../platform/workspace/common/workspace.js';
 import { IRecentFolder, IRecentWorkspace, IRecentlyOpened, IWorkspacesService, isRecentFolder, isRecentWorkspace } from '../../../../platform/workspaces/common/workspaces.js';
+import { ILanguagePackItem, ILanguagePackService } from '../../../../platform/languagePacks/common/languagePacks.js';
+import { ILocaleService } from '../../../services/localization/common/locale.js';
 import { OpenRecentAction } from '../../../browser/actions/windowActions.js';
 import { OpenFileFolderAction, OpenFolderAction, OpenFolderViaWorkspaceAction } from '../../../browser/actions/workspaceActions.js';
 import { EditorPane } from '../../../browser/parts/editor/editorPane.js';
@@ -190,7 +217,9 @@ export class GettingStartedPage extends EditorPane {
 		@IHostService private readonly hostService: IHostService,
 		@IWebviewService private readonly webviewService: IWebviewService,
 		@IWorkspaceContextService private readonly workspaceContextService: IWorkspaceContextService,
-		@IAccessibilityService private readonly accessibilityService: IAccessibilityService
+		@IAccessibilityService private readonly accessibilityService: IAccessibilityService,
+		@ILanguagePackService private readonly languagePackService: ILanguagePackService,
+		@ILocaleService private readonly localeService: ILocaleService
 	) {
 
 		super(GettingStartedPage.ID, group, telemetryService, themeService, storageService);
@@ -362,6 +391,12 @@ export class GettingStartedPage extends EditorPane {
 			let command, argument;
 			if (dispatch.startsWith('openLink:https')) {
 				[command, argument] = ['openLink', dispatch.replace('openLink:', '')];
+			} else if (dispatch === 'selectLanguage') {
+				this.dispatchListeners.add(addDisposableListener(element, 'click', (e) => {
+					e.stopPropagation();
+					this.showLanguageSelector();
+				}));
+				return;
 			} else {
 				[command, argument] = dispatch.split(':');
 			}
@@ -868,8 +903,8 @@ export class GettingStartedPage extends EditorPane {
 		}));
 
 		const header = $('.header', {},
-			$('h1.product-name.caption', {}, this.productService.nameLong),
-			$('p.subtitle.description', {}, localize({ key: 'gettingStarted.editingEvolved', comment: ['Shown as subtitle on the Welcome page.'] }, "Editing evolved"))
+			$('h1.product-name.caption', {}, "欢迎来到代码编辑器"),
+			$('p.subtitle.description', {}, "TEST-MODIFIED-验证JS加载")
 		);
 
 		const leftColumn = $('.categories-column.categories-column-left', {},);
@@ -883,7 +918,12 @@ export class GettingStartedPage extends EditorPane {
 			$('p.showOnStartup', {},
 				showOnStartupCheckbox.domNode,
 				showOnStartupLabel,
-			));
+			),
+			$('button.button-link.language-button', {
+				'x-dispatch': 'selectLanguage',
+				title: localize('gettingStarted.selectLanguage', "Select Display Language"),
+			}, $(ThemeIcon.asCSSSelector(Codicon.globe)), $('span', {}, localize('gettingStarted.language', "Language")))
+		);
 
 		const layoutLists = () => {
 			if (gettingStartedList.itemCount) {
@@ -1060,7 +1100,7 @@ export class GettingStartedPage extends EditorPane {
 
 		const startList = this.startList = new GettingStartedIndexList(
 			{
-				title: localize('start', "Start"),
+				title: localize('start', "Start 亦为"),
 				klass: 'start-container',
 				limit: 10,
 				renderElement: renderStartEntry,
@@ -1610,6 +1650,40 @@ export class GettingStartedPage extends EditorPane {
 		} else {
 			this.runSkip();
 		}
+	}
+
+	private async showLanguageSelector() {
+		const installedLanguages = await this.languagePackService.getInstalledLanguages();
+		const availableLanguages = await this.languagePackService.getAvailableLanguages();
+
+		const disposables = new DisposableStore();
+		const qp = disposables.add(this.quickInputService.createQuickPick<ILanguagePackItem>({ useSeparators: true }));
+		qp.matchOnDescription = true;
+		qp.placeholder = localize('chooseLocale', "Select Display Language");
+
+		if (installedLanguages?.length) {
+			const items: Array<ILanguagePackItem | IQuickPickSeparator> = [{ type: 'separator', label: localize('installed', "Installed") }];
+			qp.items = items.concat(installedLanguages);
+		}
+
+		const newLanguages = availableLanguages.filter(l => l.id && !installedLanguages.some(il => il.id === l.id));
+		if (newLanguages.length) {
+			qp.items = [
+				...qp.items,
+				{ type: 'separator', label: localize('available', "Available") },
+				...newLanguages
+			];
+		}
+
+		disposables.add(qp.onDidAccept(async () => {
+			const selectedLanguage = qp.activeItems[0] as ILanguagePackItem | undefined;
+			if (selectedLanguage) {
+				qp.hide();
+				await this.localeService.setLocale(selectedLanguage);
+			}
+		}));
+
+		qp.show();
 	}
 
 	private setSlide(toEnable: 'details' | 'categories', firstLaunch: boolean = false) {

@@ -1,6 +1,49 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 快捷键注册系统】
+ *  本文件实现 VSCode/Void 的快捷键注册和管理系统，提供跨平台的键绑定支持：
+ *
+ *  【核心职责】
+ *  1. 定义快捷键项接口（IKeybindingItem）
+ *  2. 支持跨平台快捷键（Windows/Linux/macOS）
+ *  3. 实现快捷键权重系统（weight）
+ *  4. 支持上下文条件（when）
+ *  5. 管理命令与快捷键的关联
+ *
+ *  【快捷键结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  IKeybindings - 快捷键定义                            │
+ *  │  ├─ primary: 主快捷键                                 │
+ *  │  ├─ secondary: 次要快捷键数组                         │
+ *  │  ├─ win: Windows 特定快捷键                           │
+ *  │  ├─ linux: Linux 特定快捷键                           │
+ *  │  └─ mac: macOS 特定快捷键                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  IKeybindingRule - 快捷键规则                         │
+ *  │  ├─ id: 命令 ID                                         │
+ *  │  ├─ weight: 权重（用于冲突解决）                        │
+ *  │  ├─ args: 命令参数                                      │
+ *  │  └─ when: 上下文条件表达式                              │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【权重系统】
+ *  - 内置命令：较高的权重
+ *  - 扩展命令：中等权重
+ *  - 用户自定义：最高权重（可覆盖内置）
+ *
+ *  【使用场景】
+ *  - 注册编辑器快捷键（Ctrl+S 保存）
+ *  - 注册工作台快捷键（Ctrl+Shift+P 命令面板）
+ *  - 为命令添加上下文条件（仅在编辑器中生效）
+ *  - 处理跨平台键绑定差异（Ctrl vs Cmd）
+ *
+ *  【与 keybinding.ts 的关系】
+ *  - keybindingsRegistry.ts 定义注册结构
+ *  - keybinding.ts 提供运行时查询和执行
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { decodeKeybinding, Keybinding } from '../../../base/common/keybindings.js';

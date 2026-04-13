@@ -103,7 +103,7 @@ export class NodeVersionManager extends Disposable {
 			dismiss,
 		);
 
-		let version = undefined;
+		let version: string | undefined = undefined;
 		switch (result) {
 			case allow:
 				await this.setUseWorkspaceNodeState(true, workspaceVersion);

@@ -230,11 +230,11 @@
     "@octokit/graphql": "8.2.0",
     "@octokit/graphql-schema": "14.4.0",
     "@octokit/rest": "21.1.0",
-    "tunnel": "^0.0.6",
-    "@vscode/extension-telemetry": "^0.9.8"
+    "@vscode/extension-telemetry": "^0.9.8",
+    "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@types/node": "20.x"
+    "@types/node": "^20.19.37"
   },
   "repository": {
     "type": "git",

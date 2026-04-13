@@ -1,6 +1,65 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 嵌入式终端服务】
+ *  本文件定义嵌入式终端服务，用于在终端贡献模块加载前创建终端：
+ *
+ *  【核心职责】
+ *  1. 在终端贡献模块可用前管理终端创建
+ *  2. 提供伪终端（Pseudoterminal）接口给嵌入者
+ *  3. 支持自定义 PTY 实现
+ *  4. 管理终端生命周期事件
+ *  5. 桥接嵌入者和终端系统
+ *
+ *  【嵌入式终端概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  嵌入式终端用于以下场景：                               │
+ *  │  - VS Code Web 版（如 vscode.dev）                      │
+ *  │  - 嵌入式编辑器场景                                      │
+ *  │  - 需要在终端服务就绪前创建终端的情况                    │
+ *  │                                                          │
+ *  │  特点：                                                   │
+ *  │  - 不依赖本地 shell                                       │
+ *  │  - 使用自定义 PTY 实现                                    │
+ *  │  - 由嵌入者提供终端逻辑                                   │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【伪终端接口】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  IEmbedderTerminalPty - 伪终端接口                     │
+ *  │  - onDidWrite: 终端输出事件                             │
+ *  │  - onDidClose: 终端关闭事件                             │
+ *  │  - onDidChangeName: 终端名称变更                        │
+ *  │  - open(): 打开终端                                     │
+ *  │  - close(): 关闭终端                                    │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IEmbedderTerminalService: 嵌入式终端服务接口
+ *  - IEmbedderTerminalOptions: 终端创建选项
+ *  - IEmbedderTerminalPty: 伪终端接口
+ *  - EmbedderTerminal: 终端类型定义
+ *
+ *  【核心方法】
+ *  - createTerminal(options): 创建嵌入式终端
+ *  - onDidCreateTerminal: 终端创建事件
+ *
+ *  【使用场景】
+ *  - VS Code for Web 的终端实现
+ *  - 远程开发环境的终端
+ *  - 自定义终端集成
+ *  - 需要在启动时立即创建终端的场景
+ *
+ *  【与 terminal.ts 的关系】
+ *  - 使用 platform/terminal/common/terminal.ts 中的类型
+ *  - 提供简化的终端接口给嵌入者
+ *
+ *  【限制】
+ *  - 暂不支持 iconPath、color、location 等高级选项
+ *  - 暂不支持 onDidOverrideDimensions 事件
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { InstantiationType, registerSingleton } from '../../../../platform/instantiation/common/extensions.js';

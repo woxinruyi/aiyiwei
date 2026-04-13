@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import type * as Proto from '../../tsServer/protocol/protocol';
+import Proto from '../../tsServer/protocol/protocol';
 import * as typeConverters from '../../typeConverters';
 import { ITypeScriptServiceClient } from '../../typescriptService';
 

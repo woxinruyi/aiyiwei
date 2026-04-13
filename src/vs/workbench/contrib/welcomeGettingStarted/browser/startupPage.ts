@@ -1,6 +1,38 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 启动页面控制】
+ *  本文件负责控制应用启动时显示哪个页面，核心逻辑：
+ *
+ *  【决策流程】
+ *  启动时根据以下优先级决定显示内容：
+ *  1. 检查 workbench.startupEditor 配置
+ *     - welcomePage: 显示欢迎页面（默认）
+ *     - newUntitledFile: 新建空白文件
+ *     - readme: 打开 README.md
+ *     - welcomePageInEmptyWorkbench: 仅在工作台为空时显示欢迎页
+ *  2. 检查是否有工作区恢复
+ *     - 如果有未保存的工作区，恢复编辑器和面板状态
+ *  3. 检查是否有文件夹打开
+ *     - 如果有，检查该文件夹的 walkthrough 配置
+ *  4. 最终默认显示欢迎页面
+ *
+ *  【核心类】
+ *  - StartupPageRunnerContribution: 实现 IWorkbenchContribution 接口
+ *    - 在 LifecyclePhase.Restored 阶段执行
+ *    - 决定是否打开欢迎页面
+ *
+ *  【配置键】
+ *  - workbench.startupEditor: 控制启动行为
+ *  - workbench.welcomePage.restorableWalkthroughs: 保存可恢复的教程状态
+ *
+ *  【与欢迎页面的关系】
+ *  - 本文件决定"是否"打开欢迎页面
+ *  - gettingStarted.ts 负责"如何"渲染欢迎页面
+ *  - 通过 GettingStartedInput 创建编辑器输入
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { URI } from '../../../../base/common/uri.js';

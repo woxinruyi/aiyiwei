@@ -145,7 +145,7 @@ export class BetterTokenStorage<T> {
 
 	async deleteAll(predicate?: (item: T) => boolean): Promise<void> {
 		const tokens = await this.getTokens();
-		const promises = [];
+		const promises: Promise<void>[] = [];
 		for (const [key, value] of tokens) {
 			if (!predicate || predicate(value)) {
 				promises.push(this.delete(key));
@@ -155,7 +155,7 @@ export class BetterTokenStorage<T> {
 	}
 
 	private async updateKeyList(tokens: Map<string, T>) {
-		const keyList = [];
+		const keyList: string[] = [];
 		for (const [key] of tokens) {
 			keyList.push(key);
 		}

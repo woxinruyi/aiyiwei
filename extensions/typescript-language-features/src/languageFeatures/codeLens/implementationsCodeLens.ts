@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { DocumentSelector } from '../../configuration/documentSelector';
 import { LanguageDescription } from '../../configuration/languageDescription';
 import { CachedResponse } from '../../tsServer/cachedResponse';
-import type * as Proto from '../../tsServer/protocol/protocol';
+import Proto from '../../tsServer/protocol/protocol';
 import * as PConst from '../../tsServer/protocol/protocol.const';
 import * as typeConverters from '../../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../../typescriptService';

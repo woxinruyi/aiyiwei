@@ -1,6 +1,58 @@
 /*--------------------------------------------------------------------------------------
  *  Copyright 2025 Glass Devtools, Inc. All rights reserved.
  *  Licensed under the Apache License, Version 2.0. See LICENSE.txt for more information.
+ *
+ *  【业务逻辑说明 - Void 设置服务】
+ *  本文件实现 Void 的设置管理服务，负责管理所有 AI 相关的配置：
+ *
+ *  【核心职责】
+ *  1. 管理提供商设置（settingsOfProvider）- API Key、Base URL 等
+ *  2. 管理功能模型选择（modelSelectionOfFeature）- 每个功能使用的模型
+ *  3. 管理全局设置（globalSettings）- 温度、最大 tokens 等
+ *  4. 管理 MCP 服务器状态（mcpUserStateOfName）
+ *  5. 提供设置变更事件通知
+ *
+ *  【设置层次结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  SettingsOfProvider - 各提供商的设置                    │
+ *  │  ├─ openAI: { apiKey, baseURL, models }                 │
+ *  │  ├─ anthropic: { apiKey, baseURL, models }              │
+ *  │  ├─ ollama: { baseURL, models }                         │
+ *  │  └─ ...                                                 │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ModelSelectionOfFeature - 功能模型选择                │
+ *  │  ├─ Chat: { provider, model }                           │
+ *  │  ├─ CtrlK: { provider, model }                          │
+ *  │  ├─ Autocomplete: { provider, model }                     │
+ *  │  └─ Apply: { provider, model }                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  GlobalSettings - 全局设置                              │
+ *  │  ├─ temperature: 温度参数                               │
+ *  │  ├─ maxTokens: 最大 token 数                            │
+ *  │  └─ ...                                                 │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【存储方式】
+ *  - 使用 IStorageService 持久化存储
+ *  - 存储键: VOID_SETTINGS_STORAGE_KEY
+ *  - 存储范围: StorageScope.PROFILE（用户配置档级别）
+ *
+ *  【核心方法】
+ *  - getState(): 获取当前设置状态
+ *  - setSettingOfProvider(): 设置提供商配置
+ *  - setModelSelectionOfFeature(): 设置功能模型
+ *  - setGlobalSetting(): 设置全局参数
+ *
+ *  【加密处理】
+ *  - API Key 使用 IEncryptionService 加密存储
+ *  - 确保敏感信息不会明文保存在存储中
+ *
+ *  【使用场景】
+ *  - Void 设置面板读取和修改配置
+ *  - 发送 LLM 消息前获取模型配置
+ *  - 切换功能时获取对应的模型选择
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------*/
 
 import { Emitter, Event } from '../../../../base/common/event.js';
@@ -289,7 +341,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 			}
 			// add disableSystemMessage feature
 			if (readS.globalSettings.disableSystemMessage === undefined) readS.globalSettings.disableSystemMessage = false;
-			
+
 			// add autoAcceptLLMChanges feature
 			if (readS.globalSettings.autoAcceptLLMChanges === undefined) readS.globalSettings.autoAcceptLLMChanges = false;
 		}

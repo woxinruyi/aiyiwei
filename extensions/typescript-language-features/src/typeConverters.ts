@@ -8,7 +8,7 @@
  */
 
 import * as vscode from 'vscode';
-import type * as Proto from './tsServer/protocol/protocol';
+import type Proto from './tsServer/protocol/protocol';
 import * as PConst from './tsServer/protocol/protocol.const';
 import { ITypeScriptServiceClient } from './typescriptService';
 

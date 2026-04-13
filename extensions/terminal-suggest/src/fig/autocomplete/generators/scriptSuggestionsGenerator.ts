@@ -49,9 +49,12 @@ export async function getScriptSuggestions(
 				env: environmentVariables
 			};
 		} else {
+			// commandToRun is a string, split it into command and args
+			const parts = (commandToRun as unknown as string).split(' ');
 			executeCommandInput = {
+				command: parts[0],
+				args: parts.slice(1),
 				cwd: currentWorkingDirectory,
-				...commandToRun,
 			};
 		}
 

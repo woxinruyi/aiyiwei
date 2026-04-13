@@ -1,6 +1,56 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 语言服务】
+ *  本文件实现语言服务，负责管理编程语言的注册和语言特性请求：
+ *
+ *  【核心职责】
+ *  1. 注册和管理编程语言定义
+ *  2. 处理语言特性请求（基础特性、高级特性）
+ *  3. 管理语言 ID 编解码器
+ *  4. 触发语言注册表变更事件
+ *  5. 支持语言选择器（ILanguageSelection）
+ *
+ *  【语言特性】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  基础语言特性（Basic Language Features）                 │
+ *  │  - 自动关闭括号                                         │
+ *  │  - 行注释                                               │
+ *  │  - 单词定义                                             │
+ *  │  - 触发字符                                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  高级语言特性（Rich Language Features）                  │
+ *  │  - 语法高亮                                             │
+ *  │  - 代码补全                                             │
+ *  │  - 诊断/错误检查                                        │
+ *  │  - 悬停提示                                             │
+ *  │  - 代码导航                                             │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - registerLanguage(): 注册新语言
+ *  - createById(): 按语言 ID 创建语言选择器
+ *  - createByLanguageModeId(): 按模式 ID 创建
+ *  - requestBasicLanguageFeatures(): 请求基础特性
+ *  - requestRichLanguageFeatures(): 请求高级特性
+ *
+ *  【事件系统】
+ *  - onDidChange: 语言注册表变更
+ *  - onDidRequestBasicLanguageFeatures: 基础特性请求
+ *  - onDidRequestRichLanguageFeatures: 高级特性请求
+ *
+ *  【使用场景】
+ *  - 注册新的编程语言支持
+ *  - 根据文件扩展名确定语言
+ *  - 请求语言特性服务激活
+ *  - 多语言混合编辑支持
+ *
+ *  【与 languagesRegistry.ts 的关系】
+ *  - LanguageService 使用 LanguagesRegistry 管理语言定义
+ *  - LanguagesRegistry 提供底层的语言注册功能
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Emitter, Event } from '../../../base/common/event.js';

@@ -1,6 +1,44 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作台命令服务】
+ *  本文件实现工作台的命令服务，负责命令的注册、执行和扩展集成：
+ *
+ *  【核心职责】
+ *  1. 实现 ICommandService 接口，提供命令执行功能
+ *  2. 与扩展服务集成，支持扩展命令的延迟加载
+ *  3. 处理命令执行前后的事件通知
+ *  4. 管理扩展激活事件（* activation）
+ *  5. 提供命令执行的超时保护
+ *
+ *  【与 platform/commands 的关系】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  CommandsRegistry（平台层）                            │
+ *  │       ↑ 使用                                           │
+ *  │  CommandService（工作台层）                            │
+ *  │       ↑ 扩展支持                                       │
+ *  │  扩展命令                                              │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【命令执行流程】
+ *  1. 检查扩展服务是否就绪
+ *  2. 触发 * activation 事件（等待最多 30s）
+ *  3. 通过 CommandsRegistry 执行命令
+ *  4. 触发执行前/后事件
+ *
+ *  【核心方法】
+ *  - executeCommand(id, ...args): 执行命令
+ *  - onWillExecuteCommand: 命令执行前事件
+ *  - onDidExecuteCommand: 命令执行后事件
+ *
+ *  【使用场景】
+ *  - 命令面板执行命令
+ *  - 快捷键触发命令
+ *  - 菜单项触发命令
+ *  - 扩展调用其他命令
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';

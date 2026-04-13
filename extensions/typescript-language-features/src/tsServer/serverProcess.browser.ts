@@ -11,7 +11,7 @@ import { Logger } from '../logging/logger';
 import { supportsReadableByteStreams } from '../utils/platform';
 import { FileWatcherManager } from './fileWatchingManager';
 import { NodeVersionManager } from './nodeManager';
-import type * as Proto from './protocol/protocol';
+import Proto from './protocol/protocol';
 import { TsServerLog, TsServerProcess, TsServerProcessFactory, TsServerProcessKind } from './server';
 import { TypeScriptVersionManager } from './versionManager';
 import { TypeScriptVersion } from './versionProvider';

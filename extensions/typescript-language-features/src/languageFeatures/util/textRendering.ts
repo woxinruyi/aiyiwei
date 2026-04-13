@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { OpenJsDocLinkCommand, OpenJsDocLinkCommand_Args } from '../../commands/openJsDocLink';
-import type * as Proto from '../../tsServer/protocol/protocol';
+import Proto from '../../tsServer/protocol/protocol';
 import * as typeConverters from '../../typeConverters';
 
 export interface IFilePathToResourceConverter {

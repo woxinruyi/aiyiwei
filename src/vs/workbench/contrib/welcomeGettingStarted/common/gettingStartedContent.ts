@@ -1,6 +1,63 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 欢迎页面内容定义】
+ *  本文件定义欢迎页面的所有内容结构和数据，包括：
+ *
+ *  【核心职责】
+ *  1. 定义开始项（Start Entries）- 左侧 "Start" 区域的内容
+ *  2. 定义入门教程（Walkthroughs）- 右侧的教程卡片
+ *  3. 提供内容提供者注册机制（GettingStartedContentProviderRegistry）
+ *  4. 支持动态加载内容模块
+ *
+ *  【数据结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  startEntries: GettingStartedStartEntryContent[]        │
+ *  │  - 开始项列表（新建文件、打开文件、克隆仓库等）            │
+ *  └─────────────────────────────────────────────────────────┘
+ *                           ↓
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  walkthroughs: GettingStartedWalkthroughContent[]        │
+ *  │  - 教程列表（Get Started with VS Code, Setup, etc）       │
+ *  │  - 每个教程包含多个步骤（steps）                          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【开始项配置示例】
+ *  {
+ *    id: 'welcome.newFile',
+ *    title: localize('gettingStarted.newFile.title', "New File..."),
+ *    description: ...,
+ *    icon: Codicon.newFile,
+ *    content: {
+ *      type: 'startEntry',
+ *      command: 'command:welcome.showNewFileEntries',
+ *    }
+ *  }
+ *
+ *  【教程配置示例】
+ *  {
+ *    id: 'Setup',
+ *    title: localize('gettingStarted.setup.title', "Get Started with VS Code"),
+ *    description: ...,
+ *    icon: setupIcon,
+ *    steps: [
+ *      { id: 'pickColorTheme', title: ..., description: ..., media: ... },
+ *      ...
+ *    ]
+ *  }
+ *
+ *  【内容提供者机制】
+ *  - GettingStartedContentProviderRegistry 允许动态注册内容模块
+ *  - moduleToContent() 函数加载指定模块的内容
+ *  - 支持从 media/ 目录加载 HTML 内容
+ *
+ *  【与 gettingStarted.ts 的关系】
+ *  - gettingStarted.ts 调用此文件导出的内容
+ *  - 本文件只定义数据，不包含渲染逻辑
+ *  - 修改本文件可以增删欢迎页面的开始项和教程
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import themePickerContent from './media/theme_picker.js';

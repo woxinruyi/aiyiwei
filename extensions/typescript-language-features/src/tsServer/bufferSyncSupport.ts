@@ -15,7 +15,7 @@ import { nulToken } from '../utils/cancellation';
 import { Disposable } from '../utils/dispose';
 import { ResourceMap } from '../utils/resourceMap';
 import { API } from './api';
-import type * as Proto from './protocol/protocol';
+import type Proto from './protocol/protocol';
 
 type ScriptKind = 'TS' | 'TSX' | 'JS' | 'JSX';
 

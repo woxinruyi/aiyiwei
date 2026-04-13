@@ -1,6 +1,58 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文件服务接口与文件系统提供者】
+ *  本文件定义文件服务（IFileService）的核心接口和文件系统提供者抽象：
+ *
+ *  【核心职责】
+ *  1. 定义文件服务接口（IFileService）- 统一文件操作入口
+ *  2. 定义文件系统提供者接口（IFileSystemProvider）- 支持多协议文件访问
+ *  3. 提供文件元数据类型（IFileStat、IFileStatWithMetadata）
+ *  4. 定义文件操作选项和事件
+ *  5. 支持多种文件协议（file://, http://, memfs:// 等）
+ *
+ *  【文件系统提供者架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │                IFileService（文件服务接口）              │
+ *  │                       ↑ 实现                              │
+ *  │              FileService（文件服务实现）                │
+ *  │                       ↓ 管理                              │
+ *  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐  │
+ *  │  │file://   │ │http://   │ │memfs://  │ │其他协议   │  │
+ *  │  │本地磁盘  │ │HTTP      │ │内存文件  │ │...       │  │
+ *  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【支持的文件操作】
+ *  - resolve(): 解析文件/目录元数据
+ *  - readFile(): 读取文件内容（字节流）
+ *  - writeFile(): 写入文件内容
+ *  - createFile(): 创建新文件
+ *  - delete(): 删除文件/目录
+ *  - rename(): 重命名/移动
+ *  - copy(): 复制文件/目录
+ *  - watch(): 监视文件变化
+ *  - provider(): 获取特定协议的提供者
+ *
+ *  【文件事件系统】
+ *  - onDidChangeFileSystemProviderRegistrations: 提供者注册/注销
+ *  - onDidChangeFileSystemProviderCapabilities: 能力变更
+ *  - onWillActivateFileSystemProvider: 提供者即将激活
+ *  - onDidFilesChange: 文件内容变化
+ *
+ *  【与 fileService.ts 的关系】
+ *  - files.ts 定义接口和类型
+ *  - fileService.ts 提供具体实现
+ *  - 其他模块使用 IFileService 接口进行文件操作
+ *
+ *  【使用场景】
+ *  - 编辑器保存/读取文件
+ *  - 资源管理器浏览文件树
+ *  - 搜索服务遍历文件
+ *  - 扩展通过 IFileService 访问文件
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { VSBuffer, VSBufferReadable, VSBufferReadableStream } from '../../../base/common/buffer.js';

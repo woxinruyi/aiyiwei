@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
 import { CachedResponse } from '../../tsServer/cachedResponse';
-import type * as Proto from '../../tsServer/protocol/protocol';
+import Proto from '../../tsServer/protocol/protocol';
 import { ServerResponse } from '../../typescriptService';
 
 suite('CachedResponse', () => {

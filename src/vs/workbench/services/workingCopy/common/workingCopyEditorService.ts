@@ -1,6 +1,55 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作副本编辑器服务】
+ *  本文件实现工作副本编辑器服务，负责将工作副本与编辑器关联：
+ *
+ *  【核心职责】
+ *  1. 管理工作副本编辑器处理器注册表
+ *  2. 根据工作副本类型创建合适的编辑器
+ *  3. 检查工作副本是否在编辑器中打开
+ *  4. 支持崩溃恢复时重新打开编辑器
+ *  5. 协调工作副本和编辑器之间的关系
+ *
+ *  【编辑器处理器概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  IWorkingCopyEditorHandler 接口：                       │
+ *  │  - handles(workingCopy): 是否能处理此工作副本           │
+ *  │  - isOpen(workingCopy, editor): 检查是否已打开         │
+ *  │  - createEditor(workingCopy): 创建适合的编辑器输入      │
+ *  │                                                          │
+ *  │  示例处理器：                                             │
+ *  │  - 文本文件处理器 → 创建 FileEditorInput               │
+ *  │  - 未命名文件处理器 → 创建 UntitledEditorInput         │
+ *  │  - 自定义编辑器处理器 → 创建 CustomEditorInput          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IWorkingCopyEditorService: 编辑器服务接口
+ *  - IWorkingCopyEditorHandler: 编辑器处理器接口
+ *  - IWorkingCopyIdentifier: 工作副本标识符
+ *
+ *  【核心方法】
+ *  - registerHandler(handler): 注册编辑器处理器
+ *  - onDidRegisterHandler: 处理器注册事件
+ *  - findHandler(workingCopy): 查找适合的处理器
+ *
+ *  【使用场景】
+ *  - 崩溃恢复时重新打开所有工作副本
+ *  - 从备份恢复时创建对应编辑器
+ *  - 热退出后恢复编辑器状态
+ *  - 扩展贡献自定义工作副本类型
+ *
+ *  【与 editorService.ts 的关系】
+ *  - 使用 IEditorService 打开编辑器
+ *  - 创建 EditorInput 供编辑器服务使用
+ *
+ *  【与 workingCopyBackup.ts 的关系】
+ *  - 备份恢复时使用此服务创建编辑器
+ *  - 协调备份和编辑器之间的关系
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Emitter, Event } from '../../../../base/common/event.js';

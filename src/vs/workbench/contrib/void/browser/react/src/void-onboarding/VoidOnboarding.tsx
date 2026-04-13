@@ -597,6 +597,7 @@ const VoidOnboardingContent = () => {
 			content={
 				<div className='flex flex-col items-center gap-8'>
 					<div className="text-5xl font-light text-center">Welcome to Void</div>
+				<div className="text-2xl font-light text-center opacity-70">欢迎来到编辑器</div>
 
 					{/* Slice of Void image */}
 					<div className='max-w-md w-full h-[30vh] mx-auto flex items-center justify-center'>

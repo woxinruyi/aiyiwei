@@ -258,11 +258,11 @@ const createServerInstance = (ipcAddress: string) =>
 				try {
 					await vscode.commands.executeCommand(
 						'extension.js-debug.autoAttachToProcess',
-						JSON.parse(Buffer.concat(data).toString()),
+						JSON.parse(Buffer.concat(data as readonly Uint8Array<ArrayBufferLike>[]).toString()),
 					);
-					socket.write(Buffer.from([0]));
+					socket.write(Buffer.from([0]) as Uint8Array);
 				} catch (err) {
-					socket.write(Buffer.from([1]));
+					socket.write(Buffer.from([1]) as Uint8Array);
 					console.error(err);
 				}
 			});

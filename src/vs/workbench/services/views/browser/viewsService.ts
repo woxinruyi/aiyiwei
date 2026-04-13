@@ -1,6 +1,62 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 视图服务实现】
+ *  本文件实现视图服务，管理视图的创建、显示和生命周期：
+ *
+ *  【核心职责】
+ *  1. 管理视图的打开和关闭
+ *  2. 处理视图可见性变更
+ *  3. 管理视图面板容器（ViewPaneContainer）
+ *  4. 触发视图相关事件
+ *  5. 协调视图与面板的集成
+ *
+ *  【视图概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  视图是可折叠的面板内的内容区域：                       │
+ *  │  ┌─────────────────────────────────────────────────┐ │
+ *  │  │  资源管理器（ViewContainer）                      │ │
+ *  │  │  ┌─────────────────────────────────────────────┐ │ │
+ *  │  │  │  大纲视图（View）      │  时间线视图      │ │ │
+ *  │  │  │  - 可折叠              │  - 可折叠        │ │ │
+ *  │  │  │  - 可拖拽调整大小      │  - 可隐藏/显示   │ │ │
+ *  │  │  └─────────────────────────────────────────────┘ │ │
+ *  │  └─────────────────────────────────────────────────┘ │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心类】
+ *  - ViewsService: 视图服务实现类
+ *  - ViewPaneContainer: 视图面板容器
+ *  - IPaneCompositePartService: 面板服务接口
+ *
+ *  【核心方法】
+ *  - openView(): 打开视图
+ *  - closeView(): 关闭视图
+ *  - isViewVisible(): 检查视图是否可见
+ *  - getActiveViewPaneContainer(): 获取活动视图容器
+ *
+ *  【事件系统】
+ *  - onDidChangeViewVisibility: 单个视图可见性变更
+ *  - onDidChangeViewContainerVisibility: 视图容器可见性变更
+ *
+ *  【视图位置】
+ *  - 侧边栏（Sidebar）: 资源管理器、搜索、源代码管理等
+ *  - 底部面板（Panel）: 终端、输出、调试控制台等
+ *  - 辅助侧边栏（AuxiliaryBar）: 扩展贡献的辅助视图
+ *
+ *  【使用场景】
+ *  - 打开大纲视图（Ctrl+Shift+O）
+ *  - 打开时间线视图
+ *  - 管理视图布局（拖拽、调整大小）
+ *  - 扩展贡献新视图
+ *  - 保存和恢复视图状态
+ *
+ *  【与 viewDescriptorService.ts 的关系】
+ *  - 使用 IViewDescriptorService 获取视图描述
+ *  - 协调视图描述和视图实例
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Disposable, IDisposable, toDisposable, DisposableStore, DisposableMap } from '../../../../base/common/lifecycle.js';

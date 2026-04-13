@@ -47,7 +47,7 @@ export function getLanguageModelCache<T>(maxEntries: number, cleanupIntervalTime
 
 			if (nModels === maxEntries) {
 				let oldestTime = Number.MAX_VALUE;
-				let oldestUri = null;
+				let oldestUri: string | null = null;
 				for (const uri in languageModels) {
 					const languageModelInfo = languageModels[uri];
 					if (languageModelInfo.cTime < oldestTime) {

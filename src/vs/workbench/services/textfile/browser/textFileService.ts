@@ -1,6 +1,60 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文本文件服务实现】
+ *  本文件实现文本文件的读写服务，处理编码、换行符等文本特性：
+ *
+ *  【核心职责】
+ *  1. 读取文本文件（支持多种编码：UTF-8, UTF-16, GBK 等）
+ *  2. 写入文本文件（自动检测和处理编码）
+ *  3. 管理文本文件模型（TextFileEditorModel）
+ *  4. 处理文件保存和自动保存
+ *  5. 支持大文件流式读取
+ *
+ *  【架构设计】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │              ITextFileService (接口)                     │
+ *  │                     ↑ 实现                             │
+ *  │        BrowserTextFileService (本文件)                   │
+ *  │                     ↑ 依赖                             │
+ *  │         TextFileEditorModelManager                     │
+ *  │                     ↑ 管理                             │
+ *  │           TextFileEditorModel（文件模型）              │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【支持的编码】
+ *  - UTF-8（默认）
+ *  - UTF-8 with BOM
+ *  - UTF-16 BE/LE
+ *  - GBK（中文）
+ *  - 其他系统编码
+ *
+ *  【核心方法】
+ *  - read(resource, options): 读取文本文件
+ *  - write(resource, value, options): 写入文本文件
+ *  - create(resource, value, options): 创建新文件
+ *  - save(resource, options): 保存文件
+ *  - revert(resource, options): 恢复文件到磁盘状态
+ *
+ *  【文件模型管理】
+ *  - TextFileEditorModel: 代表一个打开的文本文件
+ *  - 跟踪文件的脏状态（是否有未保存修改）
+ *  - 处理自动保存逻辑
+ *  - 管理文件编码
+ *
+ *  【使用场景】
+ *  - 编辑器打开文件时读取内容
+ *  - 保存文件时写入磁盘
+ *  - 处理文件编码转换
+ *  - 自动保存功能
+ *
+ *  【与编辑器的关系】
+ *  - 编辑器通过 ITextFileService 读取和保存文件
+ *  - 文本模型（ITextModel）与文件模型关联
+ *  - 保存时同步更新文本模型和磁盘文件
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../nls.js';

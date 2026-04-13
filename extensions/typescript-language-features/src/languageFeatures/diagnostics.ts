@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { TypeScriptServiceConfiguration } from '../configuration/configuration';
 import { DiagnosticLanguage } from '../configuration/languageDescription';
 import { TelemetryReporter } from '../logging/telemetry';
-import { DiagnosticPerformanceData as TsDiagnosticPerformanceData } from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as arrays from '../utils/arrays';
 import { Disposable } from '../utils/dispose';
 import { equals } from '../utils/objects';
@@ -174,10 +174,6 @@ class DiagnosticSettings {
 	}
 }
 
-interface DiagnosticPerformanceData extends TsDiagnosticPerformanceData {
-	fileLineCount?: number;
-}
-
 class DiagnosticsTelemetryManager extends Disposable {
 
 	private readonly _diagnosticCodesMap = new Map<number, number>();
@@ -199,7 +195,7 @@ class DiagnosticsTelemetryManager extends Disposable {
 		this._registerTelemetryEventEmitter();
 	}
 
-	public logDiagnosticsPerformanceTelemetry(performanceData: DiagnosticPerformanceData[]): void {
+	public logDiagnosticsPerformanceTelemetry(performanceData: Proto.DiagnosticPerformanceData[]): void {
 		for (const data of performanceData) {
 			/* __GDPR__
 				"diagnostics.performance" : {
@@ -383,7 +379,7 @@ export class DiagnosticsManager extends Disposable {
 		return this._currentDiagnostics.get(file) || [];
 	}
 
-	public logDiagnosticsPerformanceTelemetry(performanceData: DiagnosticPerformanceData[]): void {
+	public logDiagnosticsPerformanceTelemetry(performanceData: Proto.DiagnosticPerformanceData[]): void {
 		this._diagnosticsTelemetryManager?.logDiagnosticsPerformanceTelemetry(performanceData);
 	}
 

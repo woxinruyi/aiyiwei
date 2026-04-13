@@ -1,6 +1,40 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - URI 基础模块】
+ *  本文件实现 VSCode/Void 的 URI 处理基础类，提供统一的资源标识符解析和生成：
+ *
+ *  【核心职责】
+ *  1. 定义 URI 类 - 不可变的统一资源标识符
+ *  2. 解析 URI 字符串（scheme, authority, path, query, fragment）
+ *  3. 生成 URI 字符串
+ *  4. 处理不同平台的路径格式（Windows/Unix）
+ *  5. URI 验证和规范化
+ *
+ *  【URI 结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  scheme://authority/path?query#fragment                │
+ *  │  ├─ scheme: 协议（file, http, https, vscode）          │
+ *  │  ├─ authority: 主机和端口（user@host:port）            │
+ *  │  ├─ path: 资源路径                                     │
+ *  │  ├─ query: 查询参数（?key=value）                       │
+ *  │  └─ fragment: 片段标识符（#section）                    │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【常用方法】
+ *  - URI.parse(str): 从字符串解析 URI
+ *  - URI.file(path): 从文件路径创建 URI
+ *  - uri.toString(): 转换为字符串
+ *  - uri.with(change): 创建修改后的 URI
+ *
+ *  【使用场景】
+ *  - 标识编辑器中的文件
+ *  - 网络请求地址
+ *  - 扩展资源路径
+ *  - 工作区文件夹标识
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CharCode } from './charCode.js';

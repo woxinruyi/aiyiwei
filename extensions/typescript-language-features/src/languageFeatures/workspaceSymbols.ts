@@ -8,7 +8,7 @@ import * as fileSchemes from '../configuration/fileSchemes';
 import { doesResourceLookLikeAJavaScriptFile, doesResourceLookLikeATypeScriptFile } from '../configuration/languageDescription';
 import { API } from '../tsServer/api';
 import { parseKindModifier } from '../tsServer/protocol/modifiers';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as PConst from '../tsServer/protocol/protocol.const';
 import * as typeConverters from '../typeConverters';
 import { ITypeScriptServiceClient } from '../typescriptService';

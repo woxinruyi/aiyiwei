@@ -1,6 +1,48 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作区管理服务】
+ *  本文件定义工作区管理的核心接口，负责多根工作区和最近打开的历史记录：
+ *
+ *  【核心职责】
+ *  1. 管理工作区（.code-workspace 文件）
+ *  2. 创建和删除未命名工作区
+ *  3. 管理最近打开的文件和工作区历史
+ *  4. 处理脏工作区（未保存的工作区）
+ *  5. 支持远程工作区
+ *
+ *  【工作区 vs 文件夹】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  单文件夹（Folder）                                     │
+ *  │  - 打开一个文件夹                                        │
+ *  │  - 简单项目结构                                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  多根工作区（Workspace）                                  │
+ *  │  - .code-workspace 文件                                  │
+ *  │  - 包含多个相关项目                                      │
+ *  │  - 保存窗口布局和配置                                    │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - enterWorkspace(): 进入工作区
+ *  - createUntitledWorkspace(): 创建未命名工作区
+ *  - deleteUntitledWorkspace(): 删除未命名工作区
+ *  - addRecentlyOpened(): 添加到最近打开
+ *  - getRecentlyOpened(): 获取最近打开列表
+ *  - getDirtyWorkspaces(): 获取脏工作区
+ *
+ *  【使用场景】
+ *  - 打开 .code-workspace 文件
+ *  - 保存窗口布局为工作区
+ *  - 管理最近打开的项目
+ *  - 恢复未保存的工作区
+ *
+ *  【与 workspace.ts 的关系】
+ *  - workspace.ts: 定义 IWorkspaceContextService（当前工作区上下文）
+ *  - workspaces.ts: 定义 IWorkspacesService（工作区管理操作）
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Event } from '../../../base/common/event.js';

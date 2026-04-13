@@ -22,7 +22,7 @@ import { ILogDirectoryProvider } from './tsServer/logDirectoryProvider';
 import { NodeVersionManager } from './tsServer/nodeManager';
 import { TypeScriptPluginPathsProvider } from './tsServer/pluginPathsProvider';
 import { PluginManager } from './tsServer/plugins';
-import * as Proto from './tsServer/protocol/protocol';
+import Proto from './tsServer/protocol/protocol';
 import { EventName } from './tsServer/protocol/protocol.const';
 import { ITypeScriptServer, TsServerLog, TsServerProcessFactory, TypeScriptServerExitEvent } from './tsServer/server';
 import { TypeScriptServerError } from './tsServer/serverError';

@@ -1,6 +1,62 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作区扩展配置服务】
+ *  本文件实现工作区扩展配置服务，管理 .vscode/extensions.json 文件：
+ *
+ *  【核心职责】
+ *  1. 读取和解析工作区的 extensions.json 配置文件
+ *  2. 管理推荐的扩展列表（recommendations）
+ *  3. 管理不推荐的扩展列表（unwantedRecommendations）
+ *  4. 支持切换推荐/不推荐状态
+ *  5. 监控配置文件变更
+ *
+ *  【配置文件位置】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  .vscode/extensions.json                               │
+ *  │  {                                                       │
+ *  │    "recommendations": [                                  │
+ *  │      "dbaeumer.vscode-eslint",                          │
+ *  │      "ms-vscode.vscode-typescript-next"               │
+ *  │    ],                                                    │
+ *  │    "unwantedRecommendations": [                          │
+ *  │      "some.deprecated-extension"                        │
+ *  │    ]                                                     │
+ *  │  }                                                       │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【多根工作区支持】
+ *  - 支持多个工作区文件夹各自的配置
+ *  - 合并所有工作区的推荐列表
+ *  - 去重处理
+ *
+ *  【核心接口】
+ *  - IWorkspaceExtensionsConfigService: 服务接口
+ *  - IExtensionsConfigContent: 配置内容结构
+ *  - EXTENSIONS_CONFIG: 配置文件路径常量
+ *
+ *  【核心方法】
+ *  - getExtensionsConfigs(): 获取所有配置
+ *  - getRecommendations(): 获取推荐列表
+ *  - getUnwantedRecommendations(): 获取不推荐列表
+ *  - toggleRecommendation(): 切换推荐状态
+ *  - toggleUnwantedRecommendation(): 切换不推荐状态
+ *
+ *  【使用场景】
+ *  - 打开工作区时提示安装推荐扩展
+ *  - 扩展面板显示"工作区推荐"标签
+ *  - 团队协作共享推荐的开发工具
+ *  - 避免安装已知有问题的扩展
+ *
+ *  【与 extensionRecommendations.ts 的关系】
+ *  - 被 ExtensionRecommendationsService 调用
+ *  - 提供工作区特定的推荐数据
+ *
+ *  【与 jsonEditing.ts 的关系】
+ *  - 使用 IJSONEditingService 修改配置文件
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { distinct } from '../../../../base/common/arrays.js';

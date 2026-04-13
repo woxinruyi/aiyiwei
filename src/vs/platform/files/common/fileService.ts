@@ -1,6 +1,58 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文件服务实现】
+ *  本文件实现文件系统的核心服务，是所有文件操作的统一入口：
+ *
+ *  【核心职责】
+ *  1. 管理文件系统提供者（FileSystemProvider）注册
+ *  2. 提供文件读写接口（readFile, writeFile）
+ *  3. 支持目录操作（createFolder, delete, copy）
+ *  4. 文件监听和变更事件（watch, onDidChange）
+ *  5. 处理多种协议（file://, vscode-userdata://, memfs:// 等）
+ *
+ *  【架构设计】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │                IFileService (接口)                      │
+ *  │                      ↑ 实现                             │
+ *  │              FileService (本文件)                       │
+ *  │                      ↑ 依赖                             │
+ *  │        ┌─────────────┴─────────────┐               │
+ *  │        │                             │               │
+ *  │  IFileSystemProvider           IFileSystemProvider   │
+ *  │  (file://)                     (其他协议)             │
+ *  │        │                             │               │
+ *  │  本地磁盘                        远程/虚拟文件系统   │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【支持的协议】
+ *  - file:// - 本地文件系统
+ *  - vscode-userdata:// - 用户数据目录
+ *  - vscode-remote:// - 远程开发
+ *  - memfs:// - 内存文件系统
+ *
+ *  【核心方法】
+ *  - resolve(resource): 解析文件元数据
+ *  - readFile(resource): 读取文件内容
+ *  - writeFile(resource, content): 写入文件
+ *  - createFolder(resource): 创建目录
+ *  - delete(resource): 删除文件/目录
+ *  - copy(source, target): 复制文件
+ *  - watch(resource): 监听文件变更
+ *
+ *  【使用场景】
+ *  - 编辑器打开文件时调用 readFile()
+ *  - 保存文件时调用 writeFile()
+ *  - 文件浏览器展示目录时调用 resolve()
+ *  - 配置文件读写（settings.json）
+ *  - 语言包文件加载
+ *
+ *  【文件系统提供者】
+ *  - 本地文件系统: DiskFileSystemProvider (Node.js fs 模块)
+ *  - 远程文件系统: RemoteFileSystemProvider (通过 IPC)
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { coalesce } from '../../../base/common/arrays.js';

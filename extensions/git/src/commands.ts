@@ -541,7 +541,7 @@ class CheckoutItemsProcessor extends RefItemsProcessor {
 				// Button(s)
 				if (item.refRemote) {
 					const matchingRemote = this.repository.remotes.find((remote) => remote.name === item.refRemote);
-					const buttons = [];
+					const buttons: RemoteSourceActionButton[] = [];
 					if (matchingRemote?.pushUrl) {
 						buttons.push(...this.buttons.get(matchingRemote.pushUrl) ?? []);
 					}

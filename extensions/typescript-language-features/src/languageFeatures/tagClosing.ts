@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { LanguageDescription } from '../configuration/languageDescription';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
 import { ITypeScriptServiceClient } from '../typescriptService';
 import { Disposable } from '../utils/dispose';

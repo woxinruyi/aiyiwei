@@ -1,6 +1,52 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 生命周期服务实现】
+ *  本文件实现抽象生命周期服务，控制应用启动、阶段变更和关闭流程：
+ *
+ *  【核心职责】
+ *  1. 管理生命周期阶段变更（Starting → Ready → Restored → Eventually）
+ *  2. 处理启动类型识别（NewWindow / ReloadedWindow / ReopenedWindow）
+ *  3. 发送生命周期事件（onBeforeShutdown / onWillShutdown / onDidShutdown）
+ *  4. 支持阶段等待机制（Barrier 模式）
+ *  5. 保存和恢复关闭原因
+ *
+ *  【生命周期阶段管理】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Phase 1: Starting                                      │
+ *  │  - 初始化阶段，服务正在准备                               │
+ *  │  - 记录启动类型（startupKind）                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Phase 2: Ready                                         │
+ *  │  - 服务就绪，UI 状态即将恢复                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Phase 3: Restored                                      │
+ *  │  - 视图、面板、编辑器已恢复                              │
+ *  │  - 大多数贡献点在此阶段注册                              │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Phase 4: Eventually                                    │
+ *  │  - 延迟加载阶段（2-5秒后）                               │
+ *  │  - 非关键服务在此阶段初始化                              │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【启动类型识别】
+ *  - 通过存储的 LAST_SHUTDOWN_REASON_KEY 判断上次关闭原因
+ *  - RELOAD → ReloadedWindow（窗口重新加载）
+ *  - LOAD → ReopenedWindow（重新打开工作区）
+ *  - 其他 → NewWindow（新窗口）
+ *
+ *  【阶段等待机制】
+ *  - 使用 Barrier 实现异步阶段等待
+ *  - when(phase) 方法允许组件等待特定阶段
+ *  - 阶段到达时自动解锁对应 Barrier
+ *
+ *  【与 lifecycle.ts 的关系】
+ *  - lifecycle.ts 定义接口和类型
+ *  - 本文件提供抽象实现（AbstractLifecycleService）
+ *  - 具体平台实现继承此类（browser/electron-sandbox）
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Emitter } from '../../../../base/common/event.js';

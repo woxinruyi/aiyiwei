@@ -1,6 +1,51 @@
 /*--------------------------------------------------------------------------------------
  *  Copyright 2025 Glass Devtools, Inc. All rights reserved.
  *  Licensed under the Apache License, Version 2.0. See LICENSE.txt for more information.
+ *
+ *  【业务逻辑说明 - Void LLM 消息服务】
+ *  本文件实现 LLM（大语言模型）消息发送服务，负责与 AI 提供商通信：
+ *
+ *  【核心职责】
+ *  1. 发送 LLM 消息（sendLLMMessage）- 流式响应
+ *  2. 中止请求（abort）- 取消正在进行的请求
+ *  3. 获取模型列表（ollamaList, openAICompatibleList）
+ *  4. 通过 IPC 通道与主进程通信
+ *  5. 管理回调钩子（Hooks）处理流式响应
+ *
+ *  【架构设计】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │              LLMMessageService（本文件）                │
+ *  │                      ↓ IPC 调用                        │
+ *  │         electron-main/sendLLMMessage.ts                 │
+ *  │                      ↓ HTTP 请求                       │
+ *  │            OpenAI / Anthropic / Ollama API            │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【为什么要走主进程】
+ *  1. 绕过浏览器的 CSP（内容安全策略）限制
+ *  2. 可以使用 Node.js 的 http 模块更灵活地控制请求
+ *  3. 本地提供商（Ollama）需要访问 localhost
+ *  4. 统一管理 API Key 等敏感信息
+ *
+ *  【核心方法】
+ *  - sendLLMMessage(params): 发送消息，返回 requestId
+ *  - abort(requestId): 中止指定请求
+ *  - ollamaList(params): 获取 Ollama 本地模型列表
+ *  - openAICompatibleList(params): 获取 OpenAI 兼容模型列表
+ *
+ *  【回调钩子】
+ *  - onText: 流式接收文本片段
+ *  - onFinalMessage: 接收完整响应
+ *  - onError: 错误处理
+ *  - onAbort: 中止确认
+ *
+ *  【使用场景】
+ *  - Void 侧边栏发送聊天消息
+ *  - Ctrl+K 快速编辑
+ *  - Apply 代码应用
+ *  - Autocomplete 自动补全
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------*/
 
 import { EventLLMMessageOnTextParams, EventLLMMessageOnErrorParams, EventLLMMessageOnFinalMessageParams, ServiceSendLLMMessageParams, MainSendLLMMessageParams, MainLLMMessageAbortParams, ServiceModelListParams, EventModelListOnSuccessParams, EventModelListOnErrorParams, MainModelListParams, OllamaModelResponse, OpenaiCompatibleModelResponse, } from './sendLLMMessageTypes.js';

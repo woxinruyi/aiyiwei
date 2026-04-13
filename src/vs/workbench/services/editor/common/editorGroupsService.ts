@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 编辑器组服务接口】
+ *  本文件定义编辑器组管理的核心接口，负责管理编辑器组的创建、删除和布局：
+ *
+ *  【核心职责】
+ *  1. 管理编辑器组（Editor Group）- 编辑器区域的容器
+ *  2. 支持分屏编辑（Split Editor）
+ *  3. 处理编辑器组布局（水平/垂直排列）
+ *  4. 管理活动编辑器组
+ *  5. 支持编辑器组的拖放操作
+ *
+ *  【编辑器组概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  编辑器组是编辑器区域的容器，每个组可以包含多个编辑器   │
+ *  │  用户可以创建多个组进行分屏编辑                           │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【布局方向】
+ *  - GroupDirection.UP/DOWN/LEFT/RIGHT - 在指定方向创建新组
+ *  - GroupOrientation.HORIZONTAL/VERTICAL - 组排列方向
+ *
+ *  【组排列方式】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  GroupsArrangement.MINIMIZE_OTHERS - 最小化其他组       │
+ *  │  GroupsArrangement.MAXIMIZE - 最大化当前组              │
+ *  │  GroupsArrangement.EVEN - 均匀分配空间                  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - addGroup(location, direction): 添加新组
+ *  - removeGroup(group): 删除组
+ *  - moveEditor(editor, source, target): 移动编辑器
+ *  - copyEditor(editor, source, target): 复制编辑器
+ *
+ *  【与编辑器服务的关系】
+ *  - editorService 使用 editorGroupsService 管理编辑器组
+ *  - 编辑器组在编辑器区域（EDITOR_PART）中显示
+ *
+ *  【使用场景】
+ *  - 分屏编辑文件
+ *  - 拖动编辑器创建新组
+ *  - 比较两个文件（Diff）
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Event } from '../../../../base/common/event.js';

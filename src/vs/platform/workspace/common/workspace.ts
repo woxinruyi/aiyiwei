@@ -1,6 +1,53 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作区服务接口】
+ *  本文件定义工作区（Workspace）的核心接口，管理工作区状态和文件夹：
+ *
+ *  【核心职责】
+ *  1. 提供工作区状态管理（Empty, Folder, Workspace）
+ *  2. 管理工作区文件夹列表
+ *  3. 处理工作区变更事件
+ *  4. 提供工作区元数据（名称、配置）
+ *
+ *  【工作区状态】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  WorkbenchState.EMPTY     - 空窗口                    │
+ *  │    └─ 未打开任何文件夹                                   │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  WorkbenchState.FOLDER    - 单文件夹                   │
+ *  │    └─ 打开一个文件夹                                      │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  WorkbenchState.WORKSPACE - 多根工作区                 │
+ *  │    └─ 打开 .code-workspace 文件                        │
+ *  │    └─ 包含多个文件夹                                      │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心概念】
+ *  - IWorkspace: 工作区对象（包含文件夹、名称、配置）
+ *  - IWorkspaceFolder: 工作区文件夹（URI、名称、索引）
+ *  - IWorkspaceContextService: 工作区上下文服务
+ *  - WORKSPACE_EXTENSION: 工作区文件扩展名（.code-workspace）
+ *
+ *  【事件系统】
+ *  - onDidChangeWorkbenchState: 工作区状态变更
+ *  - onDidChangeWorkspaceName: 工作区名称变更
+ *  - onWillChangeWorkspaceFolders: 文件夹即将变更
+ *  - onDidChangeWorkspaceFolders: 文件夹已变更
+ *
+ *  【使用场景】
+ *  - 判断当前是否有打开的文件夹
+ *  - 获取工作区根路径（用于相对路径解析）
+ *  - 监听文件夹变更（添加/删除工作区文件夹）
+ *  - 保存工作区配置文件
+ *
+ *  【与欢迎页面的关系】
+ *  - 工作区为空时显示欢迎页面（workbench.startupEditor）
+ *  - 打开文件夹后隐藏欢迎页面
+ *  - 最近打开的工作区列表
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../nls.js';

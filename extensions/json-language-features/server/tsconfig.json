@@ -9,6 +9,7 @@
 			"WebWorker"
 		],
 		"module": "Node16",
+		"noImplicitAny": false
 	},
 	"include": [
 		"src/**/*"

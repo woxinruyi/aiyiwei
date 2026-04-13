@@ -99,7 +99,7 @@ function createServerHost(
 		newLine: '\n',
 		useCaseSensitiveFileNames: true,
 		write: s => {
-			apiClient?.vscode.terminal.write(s);
+			(apiClient?.vscode as any).terminal?.write(s);
 		},
 		writeOutputIsTTY() {
 			return true;
@@ -434,7 +434,7 @@ export async function createSys(
 		const connection = new ClientConnection<Requests>(fsPort);
 		await connection.serviceReady();
 
-		const apiClient = new ApiClient(connection);
+		const apiClient = new ApiClient(connection as any);
 		const fs = apiClient.vscode.workspace.fileSystem;
 		const sys = createServerHost(ts, logger, apiClient, args, watchManager, pathMapper, enabledExperimentalTypeAcquisition, onExit);
 		return { sys, fs };

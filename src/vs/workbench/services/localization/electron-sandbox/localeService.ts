@@ -1,6 +1,52 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - Electron 区域设置服务】
+ *  本文件实现 Electron 桌面环境的区域设置（语言）服务，负责：
+ *
+ *  【核心职责】
+ *  1. setLocale() - 设置显示语言（写入 argv.json）
+ *  2. clearLocalePreference() - 清除语言设置
+ *  3. 自动安装语言包扩展（如果是 Microsoft 发布的）
+ *  4. 提示用户重启应用以应用语言更改
+ *
+ *  【实现类】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │              ILocaleService (接口)                     │
+ *  │                     ↑ 实现                             │
+ *  │           NativeLocaleService (本文件)                 │
+ *  │                     ↑ 继承                             │
+ *  │  ┌─────────────────┐  ┌─────────────────┐               │
+ *  │  │ setLocale()     │  │ clearLocale()   │               │
+ *  │  │ 设置语言        │  │ 清除设置        │               │
+ *  │  └─────────────────┘  └─────────────────┘               │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【语言设置流程】
+ *  1. 用户选择语言（通过 QuickPick）
+ *  2. 调用 setLocale(languagePackItem)
+ *  3. 检查语言包是否已安装
+ *     └─ 未安装 → 打开扩展市场搜索并提示安装
+ *  4. 写入 argv.json（位于用户数据目录）
+ *     {
+ *       "locale": "zh-cn"
+ *     }
+ *  5. 显示通知："需要重启应用以应用语言更改"
+ *  6. 用户重启后，main.ts 读取 argv.json 加载对应语言包
+ *
+ *  【依赖服务】
+ *  - @IJSONEditingService - 编辑 argv.json
+ *  - @IEnvironmentService - 获取配置路径
+ *  - @IExtensionManagementService - 安装语言包扩展
+ *  - @INotificationService - 显示通知
+ *  - @IHostService - 重启应用
+ *
+ *  【与 Web 版本的区别】
+ *  - Electron: 写入 argv.json，需要重启
+ *  - Web: 使用 localStorage，刷新页面即可
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Language, LANGUAGE_DEFAULT } from '../../../../base/common/platform.js';

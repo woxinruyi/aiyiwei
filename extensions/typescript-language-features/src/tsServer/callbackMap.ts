@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ServerResponse } from '../typescriptService';
-import type * as Proto from './protocol/protocol';
+import Proto from './protocol/protocol';
 
 export interface CallbackItem<R> {
 	readonly onSuccess: (value: R) => void;

@@ -1,6 +1,67 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 用户数据配置档服务】
+ *  本文件定义用户数据配置档（Profile）服务，支持多配置档管理：
+ *
+ *  【核心职责】
+ *  1. 管理用户数据配置档（创建、删除、切换）
+ *  2. 隔离不同配置档的设置、快捷键、扩展等
+ *  3. 支持配置档导入/导出
+ *  4. 管理配置档存储位置
+ *  5. 提供默认配置档和自定义配置档
+ *
+ *  【配置档概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  配置档是隔离的用户数据集合：                           │
+ *  │  - 设置（Settings）                                      │
+ *  │  - 快捷键（Keybindings）                                 │
+ *  │  - 代码片段（Snippets）                                  │
+ *  │  - 提示词（Prompts）                                     │
+ *  │  - 任务（Tasks）                                         │
+ *  │  - 扩展（Extensions）                                      │
+ *  │  - 全局状态（Global State）                              │
+ *  │                                                          │
+ *  │  用途：                                                    │
+ *  │  - 工作 vs 个人不同环境配置                              │
+ *  │  - 不同项目不同扩展集合                                  │
+ *  │  - 团队共享配置档                                        │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【配置档资源类型】
+ *  - Settings: 用户设置
+ *  - Keybindings: 快捷键绑定
+ *  - Snippets: 代码片段
+ *  - Prompts: AI 提示词（Void 特有）
+ *  - Tasks: 任务配置
+ *  - Extensions: 已安装扩展
+ *  - GlobalState: 全局状态
+ *
+ *  【核心接口】
+ *  - IUserDataProfile: 配置档对象
+ *  - IUserDataProfilesService: 配置档服务接口
+ *  - UseDefaultProfileFlags: 使用默认配置档标志
+ *
+ *  【核心方法】
+ *  - createProfile(name, options): 创建新配置档
+ *  - updateProfile(profile, options): 更新配置档
+ *  - removeProfile(profile): 删除配置档
+ *  - switchProfile(profile): 切换配置档
+ *  - exportProfile(profile): 导出配置档
+ *  - importProfile(path): 导入配置档
+ *
+ *  【使用场景】
+ *  - 命令面板："配置档：创建配置档"
+ *  - 设置页面切换配置档
+ *  - 导出/导入配置档文件
+ *  - 工作区绑定特定配置档
+ *
+ *  【与 settings.json 的关系】
+ *  - 每个配置档有独立的 settings.json
+ *  - 存储在配置档目录下
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { hash } from '../../../base/common/hash.js';

@@ -1,6 +1,53 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 存储服务接口】
+ *  本文件定义存储服务的核心接口，负责应用状态的持久化：
+ *
+ *  【核心职责】
+ *  1. 提供键值对存储接口（IStorageService）
+ *  2. 支持存储范围（Scope）: 应用级、工作区级、配置档级
+ *  3. 管理存储目标（Target）: 用户设置、机器设置
+ *  4. 触发存储变更事件（onDidChangeValue）
+ *  5. 处理应用关闭前的存储保存（onWillSaveState）
+ *
+ *  【存储范围】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  StorageScope.APPLICATION - 应用范围                    │
+ *  │    - 跨所有工作区共享                                   │
+ *  │    - 例如：最近打开的文件列表                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  StorageScope.WORKSPACE - 工作区范围                    │
+ *  │    - 仅当前工作区有效                                   │
+ *  │    - 例如：编辑器布局、断点位置                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  StorageScope.PROFILE - 配置档范围                      │
+ *  │    - 仅当前用户配置档有效                               │
+ *  │    - 例如：主题设置、扩展状态                            │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【存储目标】
+ *  - StorageTarget.USER: 用户设置（跨设备同步）
+ *  - StorageTarget.MACHINE: 机器特定设置（不同步）
+ *
+ *  【核心方法】
+ *  - get(key, scope, target): 获取存储值
+ *  - store(key, value, scope, target): 存储值
+ *  - remove(key, scope): 删除键值
+ *  - switch(): 切换存储上下文（如切换工作区）
+ *
+ *  【使用场景】
+ *  - 保存编辑器状态和布局
+ *  - 记录用户偏好设置
+ *  - 缓存最近使用的文件和命令
+ *  - 保存欢迎页面的教程完成状态
+ *
+ *  【存储位置】
+ *  - Electron: SQLite 数据库文件（state.vscdb）
+ *  - Web: LocalStorage / IndexedDB
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Promises, RunOnceScheduler, runWhenGlobalIdle } from '../../../base/common/async.js';

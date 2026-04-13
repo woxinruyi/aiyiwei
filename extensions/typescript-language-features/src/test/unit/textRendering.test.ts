@@ -7,7 +7,6 @@ import * as assert from 'assert';
 import 'mocha';
 import { Uri } from 'vscode';
 import { IFilePathToResourceConverter, documentationToMarkdown, asPlainTextWithLinks, tagsToMarkdown } from '../../languageFeatures/util/textRendering';
-import { SymbolDisplayPart } from '../../tsServer/protocol/protocol';
 
 const noopToResource: IFilePathToResourceConverter = {
 	toResource: (path) => Uri.file(path)
@@ -170,7 +169,7 @@ suite('typescript.previewer', () => {
 						"start": { "line": 7, "offset": 5 },
 						"end": { "line": 7, "offset": 13 }
 					}
-				} as SymbolDisplayPart,
+				} as any,
 				{ "text": "}", "kind": "link" },
 				{ "text": " b", "kind": "text" }
 			], noopToResource),
@@ -190,7 +189,7 @@ suite('typescript.previewer', () => {
 						"start": { "line": 7, "offset": 5 },
 						"end": { "line": 7, "offset": 13 }
 					}
-				} as SymbolDisplayPart,
+				} as any,
 				{ "text": "husky", "kind": "linkText" },
 				{ "text": "}", "kind": "link" },
 				{ "text": " b", "kind": "text" }

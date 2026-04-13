@@ -1,6 +1,62 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 平台扩展管理服务接口】
+ *  本文件定义平台层扩展管理的核心接口，提供扩展的安装、卸载、查询功能：
+ *
+ *  【核心职责】
+ *  1. 定义扩展管理服务接口（IExtensionManagementService）
+ *  2. 定义扩展标识符规范（EXTENSION_IDENTIFIER_PATTERN）
+ *  3. 支持多平台目标（TargetPlatform）
+ *  4. 提供扩展安装、更新、卸载操作
+ *  5. 管理扩展画廊（Extension Gallery）交互
+ *
+ *  【扩展标识符】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  扩展标识符格式: publisher.name                          │
+ *  │  例如: vscode.git, ms-python.python                      │
+ *  │  正则: ^([a-z0-9A-Z][a-z0-9-A-Z]*)\.([a-z0-9A-Z][a-z0-9-A-Z]*)$ │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【目标平台（TargetPlatform）】
+ *  - WIN32_X64: Windows 64位
+ *  - WIN32_ARM64: Windows ARM
+ *  - LINUX_X64: Linux 64位
+ *  - LINUX_ARM64: Linux ARM 64
+ *  - DARWIN_X64: macOS Intel
+ *  - DARWIN_ARM64: macOS Apple Silicon
+ *  - WEB: Web 版
+ *  - UNIVERSAL: 通用扩展
+ *
+ *  【核心服务】
+ *  1. IExtensionManagementService
+ *     - installFromGallery(): 从画廊安装
+ *     - uninstall(): 卸载扩展
+ *     - reinstallFromGallery(): 重新安装
+ *     - getInstalled(): 获取已安装扩展
+ *     - onDidInstallExtension: 安装完成事件
+ *     - onDidUninstallExtension: 卸载完成事件
+ *
+ *  2. IExtensionGalleryService
+ *     - query(): 查询扩展
+ *     - getCompatibleExtension(): 获取兼容版本
+ *     - download(): 下载扩展
+ *
+ *  【扩展类型（ExtensionType）】
+ *  - System: 系统扩展（内置）
+ *  - User: 用户安装扩展
+ *
+ *  【安装选项】
+ *  - donotIncludePackAndDependencies: 不安装依赖
+ *  - installGivenVersion: 安装指定版本
+ *  - context: 安装上下文（如跳过教程）
+ *
+ *  【与 workbench 扩展管理的关系】
+ *  - platform/extensionManagement.ts: 基础接口
+ *  - workbench/extensionManagement.ts: 工作台特定扩展（多服务器支持）
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../../base/common/cancellation.js';

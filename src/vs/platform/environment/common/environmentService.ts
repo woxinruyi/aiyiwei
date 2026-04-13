@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 环境服务实现】
+ *  本文件实现环境配置服务，提供应用运行所需的路径和配置信息：
+ *
+ *  【核心职责】
+ *  1. 提供应用路径（appRoot, userDataDir, extensionsPath）
+ *  2. 管理用户数据目录
+ *  3. 提供扩展目录路径
+ *  4. 管理日志文件路径
+ *  5. 提供临时文件目录
+ *
+ *  【关键路径】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  appRoot - 应用安装目录                                │
+ *  │  示例: /Applications/Void.app/Contents/Resources/app    │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  userDataDir - 用户数据目录                            │
+ *  │  示例: ~/Library/Application Support/Void               │
+ *  │  存储: 设置、缓存、工作区状态                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  extensionsPath - 扩展目录                             │
+ *  │  示例: ~/.vscode/extensions                             │
+ *  │  存储: 安装的扩展                                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  logsPath - 日志目录                                   │
+ *  │  示例: ~/Library/Logs/Void                              │
+ *  │  存储: 应用日志文件                                     │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - INativeEnvironmentService: 原生环境服务接口
+ *  - AbstractNativeEnvironmentService: 抽象实现类
+ *
+ *  【使用场景】
+ *  - 定位配置文件位置（settings.json, argv.json）
+ *  - 确定扩展安装位置
+ *  - 存储日志文件
+ *  - 管理临时文件
+ *
+ *  【与语言设置的关系】
+ *  - argv.json 通常位于 userDataDir
+ *  - 语言设置写入 argv.json 后需要重启生效
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { toLocalISOString } from '../../../base/common/date.js';

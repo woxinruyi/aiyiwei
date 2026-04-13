@@ -537,7 +537,7 @@ export class AzureActiveDirectoryService {
 	//#region convert operations
 
 	private convertToTokenSync(json: ITokenResponse, scopeData: IScopeData, existingId?: string): IToken {
-		let claims = undefined;
+		let claims: any = undefined;
 		this._logger.trace(`[${scopeData.scopeStr}] '${existingId ?? 'new'}' Attempting to parse token response.`);
 
 		try {
@@ -551,7 +551,7 @@ export class AzureActiveDirectoryService {
 			throw e;
 		}
 
-		const id = `${claims.tid}/${(claims.oid ?? (claims.altsecid ?? '' + claims.ipd ?? ''))}`;
+		const id = `${claims.tid}/${(claims.oid ?? (claims.altsecid ?? claims.ipd ?? ''))}`;
 		const sessionId = existingId || `${id}/${randomUUID()}`;
 		this._logger.trace(`[${scopeData.scopeStr}] '${sessionId}' Token response parsed successfully.`);
 		return {

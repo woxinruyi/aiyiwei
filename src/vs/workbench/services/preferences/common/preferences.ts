@@ -1,6 +1,42 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 首选项服务接口】
+ *  本文件定义首选项（设置）服务的核心接口，支持设置编辑器的配置管理：
+ *
+ *  【核心职责】
+ *  1. 定义设置值类型（SettingValueType）
+ *  2. 提供设置组（ISettingsGroup）和设置节（ISettingsSection）接口
+ *  3. 支持设置搜索和过滤
+ *  4. 管理设置编辑器模型
+ *  5. 处理设置修改和验证
+ *
+ *  【设置值类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Null, Enum, String, MultilineString                    │
+ *  │  Integer, Number, Boolean, Array                        │
+ *  │  Exclude, Include, Complex, Object                      │
+ *  │  LanguageTag, ExtensionToggle, ComplexObject            │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - ISettingsGroup: 设置组（如：文本编辑器、工作台）
+ *  - ISettingsSection: 设置节（组内的子分类）
+ *  - ISetting: 单个设置项
+ *  - IPreferencesService: 首选项服务接口
+ *
+ *  【使用场景】
+ *  - 打开设置编辑器（Ctrl+,）
+ *  - 搜索和修改设置
+ *  - 设置验证和类型检查
+ *  - 设置同步和导入导出
+ *
+ *  【与 configurationService.ts 的关系】
+ *  - configurationService.ts 管理底层配置存储
+ *  - preferences.ts 提供上层设置编辑接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IStringDictionary } from '../../../../base/common/collections.js';

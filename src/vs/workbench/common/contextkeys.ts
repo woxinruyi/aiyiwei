@@ -1,6 +1,45 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作台上下文键定义】
+ *  本文件定义工作台层面的上下文键（Context Keys），用于条件显示和快捷键绑定：
+ *
+ *  【核心职责】
+ *  1. 定义工作台状态上下文键（workbenchState、workspaceFolderCount）
+ *  2. 定义编辑器状态上下文键（activeEditorIsDirty、activeEditorIsNotPreview）
+ *  3. 定义远程开发上下文键（remoteName）
+ *  4. 定义窗口状态上下文键（isFullscreen、isAuxiliaryWindowFocusedContext）
+ *  5. 支持虚拟工作区和 Web 文件系统访问
+ *
+ *  【上下文键分类】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Workbench - 工作台状态                                │
+ *  │  - workbenchState: empty/folder/workspace              │
+ *  │  - workspaceFolderCount: 工作区文件夹数量                │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Editor - 编辑器状态                                     │
+ *  │  - activeEditorIsDirty: 编辑器是否有未保存更改          │
+ *  │  - activeEditorIsNotPreview: 是否非预览模式             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Remote - 远程开发                                       │
+ *  │  - remoteName: 远程连接名称                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Window - 窗口状态                                     │
+ *  │  - isFullscreen: 是否全屏                               │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用场景】
+ *  - when 子句条件（菜单显示条件）
+ *  - 快捷键绑定条件
+ *  - 命令启用/禁用状态
+ *  - UI 元素显示控制
+ *
+ *  【与 platform/contextkey 的关系】
+ *  - platform/contextkey 提供基础 ContextKey 类
+ *  - 本文件定义工作台特定的上下文键常量
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { DisposableStore } from '../../base/common/lifecycle.js';

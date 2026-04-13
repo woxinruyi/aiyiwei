@@ -420,7 +420,7 @@ function createTypeScriptBuilder(config, projectFile, cmd) {
             // print stats
             const headNow = process.memoryUsage().heapUsed;
             const MB = 1024 * 1024;
-            _log('[tsb]', `time:  ${ansi_colors_1.default.yellow((Date.now() - t1) + 'ms')} + \nmem:  ${ansi_colors_1.default.cyan(Math.ceil(headNow / MB) + 'MB')} ${ansi_colors_1.default.bgcyan('delta: ' + Math.ceil((headNow - headUsed) / MB))}`);
+            _log('[tsb]', `time:  ${ansi_colors_1.default.yellow((Date.now() - t1) + 'ms')} + \nmem:  ${ansi_colors_1.default.cyan(Math.ceil(headNow / MB) + 'MB')} ${ansi_colors_1.default.gray('delta: ' + Math.ceil((headNow - headUsed) / MB))}`);
             headUsed = headNow;
         });
     }
@@ -431,8 +431,6 @@ function createTypeScriptBuilder(config, projectFile, cmd) {
     };
 }
 class ScriptSnapshot {
-    _text;
-    _mtime;
     constructor(text, mtime) {
         this._text = text;
         this._mtime = mtime;
@@ -451,8 +449,6 @@ class ScriptSnapshot {
     }
 }
 class VinylScriptSnapshot extends ScriptSnapshot {
-    _base;
-    sourceMap;
     constructor(file) {
         super(file.contents.toString(), file.stat.mtime);
         this._base = file.base;
@@ -463,20 +459,15 @@ class VinylScriptSnapshot extends ScriptSnapshot {
     }
 }
 class LanguageServiceHost {
-    _cmdLine;
-    _projectPath;
-    _log;
-    _snapshots;
-    _filesInProject;
-    _filesAdded;
-    _dependencies;
-    _dependenciesRecomputeList;
-    _fileNameToDeclaredModule;
-    _projectVersion;
     constructor(_cmdLine, _projectPath, _log) {
         this._cmdLine = _cmdLine;
         this._projectPath = _projectPath;
         this._log = _log;
+        this.directoryExists = typescript_1.default.sys.directoryExists;
+        this.getDirectories = typescript_1.default.sys.getDirectories;
+        this.fileExists = typescript_1.default.sys.fileExists;
+        this.readFile = typescript_1.default.sys.readFile;
+        this.readDirectory = typescript_1.default.sys.readDirectory;
         this._snapshots = Object.create(null);
         this._filesInProject = new Set(_cmdLine.fileNames);
         this._filesAdded = new Set();
@@ -531,7 +522,6 @@ class LanguageServiceHost {
         }
         return result;
     }
-    static _declareModule = /declare\s+module\s+('|")(.+)\1/g;
     addScriptSnapshot(filename, snapshot) {
         this._projectVersion++;
         filename = normalize(filename);
@@ -571,11 +561,6 @@ class LanguageServiceHost {
     getDefaultLibFileName(options) {
         return typescript_1.default.getDefaultLibFilePath(options);
     }
-    directoryExists = typescript_1.default.sys.directoryExists;
-    getDirectories = typescript_1.default.sys.getDirectories;
-    fileExists = typescript_1.default.sys.fileExists;
-    readFile = typescript_1.default.sys.readFile;
-    readDirectory = typescript_1.default.sys.readDirectory;
     // ---- dependency management
     collectDependents(filename, target) {
         while (this._dependenciesRecomputeList.length) {
@@ -655,4 +640,4 @@ class LanguageServiceHost {
         });
     }
 }
-//# sourceMappingURL=builder.js.map
+LanguageServiceHost._declareModule = /declare\s+module\s+('|")(.+)\1/g;

@@ -35,4 +35,7 @@ require('../esbuild-webview-common').run({
 	],
 	srcDir,
 	outdir: outDir,
+	additionalOptions: {
+		external: ['@vscode/markdown-it-katex']
+	}
 }, process.argv, postBuild);

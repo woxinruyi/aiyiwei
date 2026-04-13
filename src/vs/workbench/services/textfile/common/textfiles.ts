@@ -1,6 +1,54 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文本文件服务接口】
+ *  本文件定义文本文件服务的核心接口，负责管理文本文件的读写和模型：
+ *
+ *  【核心职责】
+ *  1. 读取文本文件（read）- 支持多种编码
+ *  2. 写入文本文件（write）- 自动处理编码
+ *  3. 管理文本文件模型（TextFileEditorModel）
+ *  4. 处理文件保存（save）和自动保存
+ *  5. 管理未保存文件（untitled files）
+ *
+ *  【架构设计】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │              ITextFileService（本接口）                  │
+ *  │                      ↑ 实现                             │
+ *  │        BrowserTextFileService / NodeTextFileService     │
+ *  │                      ↑ 依赖                             │
+ *  │              TextFileEditorModelManager                 │
+ *  │                      ↑ 管理                             │
+ *  │              TextFileEditorModel（文件模型）             │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心组件】
+ *  - files: 已保存文本文件模型管理器
+ *  - untitled: 未保存文本文件模型管理器
+ *  - encoding: 编码管理（UTF-8, UTF-16, GBK 等）
+ *
+ *  【核心方法】
+ *  - read(resource, options): 读取文本文件
+ *  - write(resource, value, options): 写入文本文件
+ *  - create(resource, value, options): 创建新文件
+ *  - save(resource, options): 保存文件
+ *  - revert(resource, options): 恢复文件到磁盘状态
+ *  - isDirty(resource): 检查文件是否有未保存更改
+ *
+ *  【使用场景】
+ *  - 编辑器打开文件时调用 read()
+ *  - 保存文件时调用 write() 或 save()
+ *  - 处理文件编码转换
+ *  - 自动保存功能
+ *  - 新建未命名文件
+ *
+ *  【与编辑器的关系】
+ *  - 编辑器通过 ITextFileService 读取和保存文件
+ *  - 文本模型（ITextModel）与文件模型关联
+ *  - 保存时同步更新文本模型和磁盘文件
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { URI } from '../../../../base/common/uri.js';

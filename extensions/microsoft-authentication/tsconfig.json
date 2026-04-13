@@ -12,12 +12,16 @@
 		"rootDir": "src",
 		"skipLibCheck": true,
 		"sourceMap": true,
+		"types": ["node"],
 		"lib": [
+			"ES2020",
+			"DOM",
 			"WebWorker"
 		]
 	},
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"**/test/**/*"
 	],
 	"include": [
 		"src/**/*",

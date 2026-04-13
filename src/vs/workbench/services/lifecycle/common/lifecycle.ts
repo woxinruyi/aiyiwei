@@ -1,6 +1,57 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 生命周期服务接口】
+ *  本文件定义应用生命周期的核心接口，控制启动、阶段变更、关闭等事件：
+ *
+ *  【核心职责】
+ *  1. 定义生命周期阶段（LifecyclePhase）
+ *  2. 处理启动阶段变更
+ *  3. 管理关闭前事件（BeforeShutdown）
+ *  4. 控制贡献点（Contribution）注册时机
+ *  5. 提供重启应用功能
+ *
+ *  【生命周期阶段】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  1. Starting        - 开始启动                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  2. Ready           - 就绪（准备阶段）                   │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  3. Restored        - 恢复完成（UI 渲染完毕）            │
+ *  │                      ↑ 大多数贡献点在此阶段注册           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  4. Eventually      - 最终阶段（延迟加载）               │
+ *  │                      ↑ 非关键服务在此阶段初始化         │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【关闭流程】
+ *  1. BeforeShutdownEvent - 关闭前事件
+ *     ├─ 允许组件否决关闭（veto）
+ *     ├─ 检查未保存文件
+ *     └─ 确认对话框
+ *  2. WillShutdownEvent - 即将关闭
+ *     ├─ 执行保存操作
+ *     └─ 清理资源
+ *  3. Shutdown - 关闭完成
+ *
+ *  【核心接口】
+ *  - ILifecycleService: 生命周期服务接口
+ *  - BeforeShutdownEvent: 关闭前事件（可否决）
+ *  - WillShutdownEvent: 即将关闭事件
+ *  - StartupKind: 启动类型（NewWindow, Reload, Reopened）
+ *
+ *  【使用场景】
+ *  - 贡献点注册: registerWorkbenchContribution(MyContribution, LifecyclePhase.Restored)
+ *  - 启动页显示: 在 Restored 阶段打开欢迎页面
+ *  - 关闭确认: 在 BeforeShutdown 检查未保存修改
+ *
+ *  【与欢迎页面的关系】
+ *  - StartupPageRunnerContribution 在 LifecyclePhase.Restored 注册
+ *  - 启动完成后自动显示欢迎页面
+ *  - 避免在 UI 未就绪时过早显示
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../../../base/common/cancellation.js';

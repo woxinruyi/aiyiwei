@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作台通知模型】
+ *  本文件实现工作台的通知系统模型，管理通知消息、状态消息和进度通知：
+ *
+ *  【核心职责】
+ *  1. 管理通知消息（Notifications as Toasts）
+ *  2. 管理状态消息（Notifications as Status）
+ *  3. 支持进度通知（Progress Notifications）
+ *  4. 处理通知过滤和排序
+ *  5. 支持通知关联和替换
+ *
+ *  【通知类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Toast 通知（弹出通知）                                 │
+ *  │  - 显示在右下角                                        │
+ *  │  - 支持信息、警告、错误                                │
+ *  │  - 可交互（按钮、链接）                                │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  状态消息（Status Bar）                                  │
+ *  │  - 显示在状态栏                                        │
+ *  │  - 临时性消息                                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  进度通知（Progress）                                    │
+ *  │  - 显示进度条                                          │
+ *  │  - 支持取消操作                                        │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - addNotification(): 添加通知
+ *  - removeNotification(): 移除通知
+ *  - showStatusMessage(): 显示状态消息
+ *  - setFilter(): 设置通知过滤器
+ *
+ *  【使用场景】
+ *  - 扩展安装完成提示
+ *  - 文件保存状态提示
+ *  - Git 操作进度显示
+ *  - 错误消息提醒
+ *
+ *  【与 NotificationService 的关系】
+ *  - NotificationService 使用本模型管理通知
+ *  - 模型处理底层数据，服务提供高层 API
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { INotification, INotificationHandle, INotificationActions, INotificationProgress, NoOpNotification, Severity, NotificationMessage, IPromptChoice, IStatusMessageOptions, NotificationsFilter, INotificationProgressProperties, IPromptChoiceWithMenu, NotificationPriority, INotificationSource, isNotificationSource } from '../../platform/notification/common/notification.js';

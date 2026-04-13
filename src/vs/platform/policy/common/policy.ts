@@ -1,6 +1,57 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 策略服务接口】
+ *  本文件定义策略服务，负责管理企业级策略配置（组策略/MDM）：
+ *
+ *  【核心职责】
+ *  1. 管理企业策略定义和值
+ *  2. 支持策略定义更新
+ *  3. 提供策略值查询接口
+ *  4. 触发策略变更事件
+ *  5. 序列化策略状态
+ *
+ *  【策略概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  策略用于企业环境中集中管理 VSCode/Void 配置：          │
+ *  │  - IT 管理员可通过组策略或 MDM 控制应用设置              │
+ *  │  - 策略值覆盖用户设置                                    │
+ *  │  - 支持字符串、数字、布尔值类型                          │
+ *  │                                                          │
+ *  │  示例策略：                                              │
+ *  │  - update.mode: 控制更新行为                            │
+ *  │  - telemetry.telemetryLevel: 控制遥测级别               │
+ *  │  - workbench.enableExperiments: 启用实验性功能         │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【策略定义】
+ *  - type: 'string' | 'number' | 'boolean'
+ *  - previewFeature: 是否为预览功能
+ *  - defaultValue: 默认值
+ *
+ *  【核心接口】
+ *  - IPolicyService: 策略服务接口
+ *  - AbstractPolicyService: 抽象基类
+ *  - PolicyValue: 策略值类型
+ *  - PolicyDefinition: 策略定义类型
+ *
+ *  【核心方法】
+ *  - updatePolicyDefinitions(definitions): 更新策略定义
+ *  - getPolicyValue(name): 获取策略值
+ *  - serialize(): 序列化策略状态
+ *
+ *  【使用场景】
+ *  - 企业 IT 管理
+ *  - 合规性控制
+ *  - 集中配置管理
+ *  - 限制用户可更改的设置
+ *
+ *  【与 configuration.ts 的关系】
+ *  - 策略值优先于用户设置
+ *  - 配置服务检查策略值
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IStringDictionary } from '../../../base/common/collections.js';

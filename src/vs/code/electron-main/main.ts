@@ -1,6 +1,48 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - Electron 主进程入口】
+ *  本文件是 Electron 主进程的真正业务逻辑入口，负责：
+ *
+ *  【核心职责】
+ *  1. 初始化主进程环境（Node.js + Electron）
+ *  2. 创建 CodeApplication 实例（应用程序管理）
+ *  3. 管理应用生命周期（启动、窗口、退出）
+ *  4. 处理应用单例（确保只有一个实例运行）
+ *  5. 初始化 IPC 通信（进程间通信）
+ *  6. 设置错误处理机制
+ *
+ *  【主进程架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │                  Electron 主进程 (main.ts)               │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ┌───────────────┐  ┌───────────────┐  ┌────────────┐  │
+ *  │  │ CodeApplication│  │ IPC Server    │  │ Window     │  │
+ *  │  │ 应用管理       │  │ 进程通信      │  │ 窗口管理   │  │
+ *  │  └───────────────┘  └───────────────┘  └────────────┘  │
+ *  └─────────────────────────────────────────────────────────┘
+ *           ↓                      ↓                      ↓
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │              渲染进程 1, 2, 3... (BrowserWindow)        │
+ *  │              src/vs/workbench/browser/workbench.ts       │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【关键类】
+ *  - CodeApplication: 应用程序主类，管理生命周期
+ *  - NodeIPCServer/NodeIPCClient: 进程间通信
+ *  - WindowsMainService: 窗口管理服务
+ *  - EnvironmentMainService: 环境配置服务
+ *
+ *  【启动流程】
+ *  1. 导入更新配置贡献点
+ *  2. 等待 app.whenReady() - Electron 初始化完成
+ *  3. 创建 CodeApplication 实例
+ *  4. 启动 IPC 服务器
+ *  5. 启动应用（openFirstWindowOpenWorkspace）
+ *  6. 创建第一个窗口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import '../../platform/update/common/update.config.contribution.js';

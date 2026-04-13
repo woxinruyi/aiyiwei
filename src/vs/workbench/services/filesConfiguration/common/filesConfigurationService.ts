@@ -1,6 +1,59 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 文件配置服务】
+ *  本文件实现文件配置服务，管理与文件相关的配置设置（自动保存、只读模式、热退出等）：
+ *
+ *  【核心职责】
+ *  1. 管理自动保存配置（autoSave 设置）
+ *  2. 处理热退出配置（hotExit）
+ *  3. 管理文件只读模式（readOnly）
+ *  4. 监控文件配置变更
+ *  5. 提供上下文键（AutoSaveAfterShortDelayContext）
+ *
+ *  【自动保存模式】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  OFF        - 禁用自动保存                              │
+ *  │  afterDelay - 延迟后自动保存（默认1000ms）            │
+ *  │  onFocusChange - 焦点变更时保存（切换到其他编辑器）   │
+ *  │  onWindowChange - 窗口变更时保存（切换到其他窗口）   │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【热退出配置】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  off         - 禁用热退出                               │
+ *  │  onExit      - 退出时触发（默认）                     │
+ *  │  onExitAndWindowClose - 退出和关闭窗口时触发          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【只读模式】
+ *  - 通过 files.readonlyInclude 配置指定
+ *  - 通过 files.readonlyExclude 配置排除
+ *  - 支持 glob 模式匹配
+ *  - 可以在编辑器标题栏切换
+ *
+ *  【核心接口】
+ *  - IFilesConfigurationService: 文件配置服务接口
+ *  - IAutoSaveConfiguration: 自动保存配置
+ *  - AutoSaveMode: 自动保存模式枚举
+ *
+ *  【缓存机制】
+ *  - ICachedAutoSaveConfiguration: 缓存配置减少查询
+ *  - LRUCache: 最近最少使用缓存
+ *  - ResourceMap: 资源映射缓存
+ *
+ *  【使用场景】
+ *  - 编辑器根据配置执行自动保存
+ *  - 热退出时保存未保存的编辑器
+ *  - 根据 glob 模式设置文件只读
+ *  - 状态栏显示自动保存状态
+ *
+ *  【与 files.ts 的关系】
+ *  - 使用 IFilesConfiguration 接口
+ *  - 监听文件服务配置变更
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../nls.js';

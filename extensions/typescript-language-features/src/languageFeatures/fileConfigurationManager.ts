@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import * as fileSchemes from '../configuration/fileSchemes';
 import { isTypeScriptDocument } from '../configuration/languageIds';
 import { API } from '../tsServer/api';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import { ITypeScriptServiceClient } from '../typescriptService';
 import { Disposable } from '../utils/dispose';
 import { equals } from '../utils/objects';

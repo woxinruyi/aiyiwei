@@ -14,7 +14,7 @@ import { Schemes } from '../configuration/schemes';
 import { TelemetryReporter } from '../logging/telemetry';
 import { API } from '../tsServer/api';
 import { CachedResponse } from '../tsServer/cachedResponse';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as PConst from '../tsServer/protocol/protocol.const';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
@@ -96,7 +96,7 @@ class SelectRefactorCommand implements Command {
 			action,
 			label: action.name,
 			description: action.description,
-		})));
+		}))) as (vscode.QuickPickItem & { action: Proto.RefactorActionInfo }) | undefined;
 		if (!selected) {
 			return;
 		}
@@ -190,7 +190,7 @@ class MoveToFileRefactorCommand implements Command {
 				return;
 			}
 			quickPickInRelativeMode = !!relativeQuery;
-			const destinationItems = body.files.map((file): DestinationItem | undefined => {
+			const destinationItems: (DestinationItem | undefined)[] = body.files.map((file): DestinationItem | undefined => {
 				const uri = this.client.toResource(file);
 				const parentDir = Utils.dirname(uri);
 				const filename = Utils.basename(uri);

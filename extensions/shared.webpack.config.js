@@ -17,6 +17,12 @@ const { DefinePlugin, optimize } = require('webpack');
 const tsLoaderOptions = {
 	compilerOptions: {
 		'sourceMap': true,
+		'esModuleInterop': true,
+		'allowSyntheticDefaultImports': true,
+		'skipLibCheck': true,
+		'noImplicitAny': false,
+		'module': 'commonjs',
+		'moduleResolution': 'node',
 	},
 	onlyCompileBundledFiles: true,
 };

@@ -290,8 +290,8 @@ export class NpmScriptsTreeDataProvider implements TreeDataProvider<TreeItem> {
 		const folders: Map<String, Folder> = new Map();
 		const packages: Map<String, PackageJSON> = new Map();
 
-		let folder = null;
-		let packageJson = null;
+		let folder: Folder | null | undefined = null;
+		let packageJson: PackageJSON | null | undefined = null;
 
 		const excludeConfig: Map<string, RegExp[]> = new Map();
 

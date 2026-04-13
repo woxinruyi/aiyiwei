@@ -1,6 +1,56 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 编辑器选项配置】
+ *  本文件定义编辑器的所有可配置选项，是 VSCode/Monaco 编辑器的核心配置中心：
+ *
+ *  【核心职责】
+ *  1. 定义编辑器的所有配置选项（IEditorOptions 接口）
+ *  2. 提供配置项的默认值和验证
+ *  3. 支持配置变更事件监听
+ *  4. 处理配置项的类型转换和验证
+ *
+ *  【配置类别】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  字体和外观                                             │
+ *  │  - fontSize: 字体大小                                   │
+ *  │  - fontFamily: 字体族                                   │
+ *  │  - lineHeight: 行高                                     │
+ *  │  - wordWrap: 自动换行                                   │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  编辑器行为                                             │
+ *  │  - autoIndent: 自动缩进                                   │
+ *  │  - tabSize: Tab 字符宽度                                  │
+ *  │  - insertSpaces: 用空格代替 Tab                           │
+ *  │  - wordSeparators: 单词分隔符                           │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  智能功能                                               │
+ *  │  - quickSuggestions: 快速建议                           │
+ *  │  - acceptSuggestionOnCommitCharacter: 提交字符接受建议   │
+ *  │  - snippetSuggestions: 代码片段建议                       │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  搜索和替换                                             │
+ *  │  - find.seedSearchStringFromSelection: 从选区搜索         │
+ *  │  - find.autoFindInSelection: 选区内自动查找             │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IEditorOptions: 编辑器选项主接口
+ *  - ITextEditorOptions: 文本编辑器选项
+ *  - IDiffEditorOptions: 差异编辑器选项
+ *
+ *  【配置注册】
+ *  - 通过 configurationRegistry 注册配置项
+ *  - 在 settings.json 中可自定义
+ *  - 支持用户设置和工作区设置
+ *
+ *  【使用场景】
+ *  - 用户设置字体大小、主题等
+ *  - 扩展贡献新的编辑器配置
+ *  - 初始化编辑器时传入配置
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import * as arrays from '../../../base/common/arrays.js';

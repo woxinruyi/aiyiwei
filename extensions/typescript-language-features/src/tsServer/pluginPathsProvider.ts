@@ -19,7 +19,7 @@ export class TypeScriptPluginPathsProvider {
 	}
 
 	public getPluginPaths(): string[] {
-		const pluginPaths = [];
+		const pluginPaths: string[] = [];
 		for (const pluginPath of this.configuration.tsServerPluginPaths) {
 			pluginPaths.push(...this.resolvePluginPath(pluginPath));
 		}

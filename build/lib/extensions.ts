@@ -441,13 +441,16 @@ function doPackageLocalExtensionsStream(forWeb: boolean, disableMangle: boolean,
 	} else {
 		// also include shared production node modules
 		const productionDependencies = getProductionDependencies('extensions/');
-		const dependenciesSrc = productionDependencies.map(d => path.relative(root, d)).map(d => [`${d}/**`, `!${d}/**/{test,tests}/**`]).flat();
-
-		result = es.merge(
-			localExtensionsStream,
-			gulp.src(dependenciesSrc, { base: '.' })
-				.pipe(util2.cleanNodeModules(path.join(root, 'build', '.moduleignore')))
-				.pipe(util2.cleanNodeModules(path.join(root, 'build', `.moduleignore.${process.platform}`))));
+		if (productionDependencies.length > 0) {
+			const dependenciesSrc = productionDependencies.map(d => path.relative(root, d)).map(d => [`${d}/**`, `!${d}/**/{test,tests}/**`]).flat();
+			result = es.merge(
+				localExtensionsStream,
+				gulp.src(dependenciesSrc, { base: '.' })
+					.pipe(util2.cleanNodeModules(path.join(root, 'build', '.moduleignore')))
+					.pipe(util2.cleanNodeModules(path.join(root, 'build', `.moduleignore.${process.platform}`))));
+		} else {
+			result = localExtensionsStream;
+		}
 	}
 
 	return (

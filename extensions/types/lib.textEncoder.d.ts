@@ -6,6 +6,7 @@
 // Define TextEncoder + TextDecoder globals for both browser and node runtimes
 //
 // Proper fix: https://github.com/microsoft/TypeScript/issues/31535
+//
+// Note: Node.js v22+ already includes TextDecoder/TextEncoder types, so no declaration needed here.
 
-declare var TextDecoder: typeof import('util').TextDecoder;
-declare var TextEncoder: typeof import('util').TextEncoder;
+export { };

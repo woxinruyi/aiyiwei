@@ -1,6 +1,56 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 用户数据配置档存储服务】
+ *  本文件实现配置档存储服务，管理各配置档的独立存储空间：
+ *
+ *  【核心职责】
+ *  1. 管理各配置档的独立存储数据库
+ *  2. 支持配置档存储数据的读写
+ *  3. 处理配置档变更事件
+ *  4. 支持远程和本地存储同步
+ *  5. 管理存储目标（用户/机器）
+ *
+ *  【配置档存储概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  每个配置档有独立的存储空间：                           │
+ *  │  - 应用存储（跨配置档共享）                              │
+ *  │  - 配置档存储（配置档特定）                              │
+ *  │  - 工作区存储（工作区特定）                              │
+ *  │                                                          │
+ *  │  存储内容：                                               │
+ *  │  - 全局状态（Global State）                              │
+ *  │  - 扩展状态                                              │
+ *  │  - 视图布局状态                                          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IUserDataProfileStorageService: 配置档存储服务接口
+ *  - IProfileStorageChanges: 配置档存储变更事件
+ *  - IProfileStorageValueChanges: 值变更详情
+ *  - IStorageValue: 存储值结构
+ *
+ *  【核心方法】
+ *  - readStorageData(profile): 读取配置档存储数据
+ *  - updateStorageData(profile, data): 更新存储数据
+ *  - onDidChange: 存储变更事件
+ *
+ *  【存储范围】
+ *  - StorageScope.PROFILE: 配置档范围
+ *  - StorageScope.APPLICATION: 应用范围（跨配置档）
+ *
+ *  【使用场景】
+ *  - 切换配置档时加载对应存储
+ *  - 导入/导出配置档时处理存储数据
+ *  - 同步配置档设置到云端
+ *  - 隔离不同配置档的扩展状态
+ *
+ *  【与 storage.ts 的关系】
+ *  - 扩展 IStorageService 接口
+ *  - 添加配置档特定的存储管理
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Disposable, DisposableMap, MutableDisposable, isDisposable, toDisposable } from '../../../base/common/lifecycle.js';

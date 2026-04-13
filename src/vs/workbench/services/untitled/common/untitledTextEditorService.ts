@@ -1,6 +1,48 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 未命名文本编辑器服务】
+ *  本文件实现未命名文本编辑器（Untitled Editor）的管理服务，负责新建未保存文件的创建和管理：
+ *
+ *  【核心职责】
+ *  1. 创建未命名文本编辑器（createOrGet）
+ *  2. 管理未命名编辑器资源（untitled:// 协议）
+ *  3. 分配唯一资源标识符（getOrCreate）
+ *  4. 处理初始值和语言设置
+ *  5. 管理未命名编辑器的生命周期
+ *
+ *  【资源标识】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  URI 格式: untitled://<scheme>/<number>                  │
+ *  │  示例: untitled://Untitled-1                             │
+ *  │  - 使用 Schemas.untitled 协议                           │
+ *  │  - 自动分配递增的数字编号                               │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - createOrGet(options): 创建或获取未命名编辑器
+ *  - getOrCreate(resource): 根据资源获取或创建
+ *  - create(options): 创建新的未命名编辑器
+ *  - has(resource): 检查资源是否存在
+ *  - revertAll(): 恢复所有未命名编辑器（清空内容）
+ *
+ *  【事件系统】
+ *  - onDidCreate: 未命名编辑器创建事件
+ *  - onDidChangeDirty: 脏状态变更
+ *  - onDidDisposeModel: 模型释放
+ *  - onWillDispose: 即将释放
+ *
+ *  【使用场景】
+ *  - 新建文件（Ctrl+N）
+ *  - 打开未命名编辑器
+ *  - 草稿文件管理
+ *
+ *  【与 textfile 服务的关系】
+ *  - 保存时将未命名编辑器转为已保存文件
+ *  - 使用 ITextFileService 进行保存操作
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { URI } from '../../../../base/common/uri.js';

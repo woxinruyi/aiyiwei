@@ -1,6 +1,53 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 快速输入服务接口】
+ *  本文件定义快速输入（QuickInput）服务的核心接口，是命令面板和各类选择器的底层支持：
+ *
+ *  【核心职责】
+ *  1. 提供 IQuickInputService 接口 - 快速输入服务的契约
+ *  2. 支持多种输入控件：QuickPick（选择器）、InputBox（输入框）
+ *  3. 处理输入事件和选择结果
+ *  4. 支持键盘导航和过滤
+ *
+ *  【输入控件类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  QuickPick - 下拉选择器                                  │
+ *  │  ├─ 单选/多选支持                                        │
+ *  │  ├─ 分隔符分组（IQuickPickSeparator）                    │
+ *  │  ├─ 过滤搜索（fuzzyScore）                               │
+ *  │  └─ 快捷键提示（keybinding）                             │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  InputBox - 文本输入框                                   │
+ *  │  ├─ 验证输入（validateInput）                           │
+ *  │  ├─ 密码输入（password）                                │
+ *  │  └─ 多行输入（multiline）                               │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IQuickPickItem: 选择项接口（label, description, detail）
+ *  - IQuickPickSeparator: 分隔符接口
+ *  - IInputBox: 输入框接口
+ *
+ *  【使用场景】
+ *  - 命令面板（Ctrl+Shift+P）- 命令选择器
+ *  - 快速文件导航（Ctrl+P）- 文件选择器
+ *  - 语言选择器 - 语言包选择
+ *  - Git 分支选择 - 分支选择器
+ *  - 颜色主题选择 - 主题选择器
+ *
+ *  【与欢迎页面的关系】
+ *  - 欢迎页面的语言按钮调用 showLanguageSelector()
+ *  - 内部使用 IQuickInputService.createQuickPick() 创建选择器
+ *  - 显示已安装和可用语言列表
+ *
+ *  【实现类】
+ *  - QuickInputService: 浏览器端实现
+ *  - 基于 HTML input 和 list 元素
+ *  - 支持键盘导航（上下箭头、Enter、Escape）
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../../base/common/cancellation.js';

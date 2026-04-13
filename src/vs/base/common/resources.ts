@@ -1,6 +1,44 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 资源处理工具模块】
+ *  本文件提供 URI 资源处理的工具函数，是文件系统操作的基础：
+ *
+ *  【核心职责】
+ *  1. 提供 IExtUri 接口 - URI 扩展比较工具
+ *  2. 实现 URI 比较、相等性检查（支持大小写敏感/不敏感）
+ *  3. 处理 URI 路径操作（dirname, basename, joinPath 等）
+ *  4. 支持相对路径计算（relativePath）
+ *  5. 处理文件系统路径格式差异
+ *
+ *  【核心接口 IExtUri】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  compare(uri1, uri2): 比较两个 URI                       │
+ *  │  isEqual(uri1, uri2): 检查 URI 是否相等                 │
+ *  │  isEqualOrParent(base, parent): 检查父子关系             │
+ *  │  getScheme(uri): 获取协议                               │
+ *  │  dirname(uri): 获取父目录                               │
+ *  │  basename(uri): 获取文件名                             │
+ *  │  joinPath(uri, ...parts): 连接路径                     │
+ *  │  relativePath(from, to): 计算相对路径                   │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【大小写敏感性】
+ *  - extUri: 区分大小写（Linux/macOS 默认）
+ *  - extUriIgnorePathCase: 忽略路径大小写（Windows 默认）
+ *
+ *  【使用场景】
+ *  - 比较两个文件路径是否相同
+ *  - 获取文件的父目录
+ *  - 计算相对路径
+ *  - 处理跨平台路径差异
+ *
+ *  【与 uri.ts 的关系】
+ *  - uri.ts 提供基础 URI 类
+ *  - resources.ts 提供 URI 工具函数
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CharCode } from './charCode.js';

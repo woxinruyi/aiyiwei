@@ -264,7 +264,7 @@ export class SettingsDocument {
 
 	private async provideLanguageCompletionItemsForLanguageOverrides(range: vscode.Range): Promise<vscode.CompletionItem[]> {
 		const languages = await vscode.languages.getLanguages();
-		const completionItems = [];
+		const completionItems: vscode.CompletionItem[] = [];
 		for (const language of languages) {
 			const item = new vscode.CompletionItem(JSON.stringify(language));
 			item.kind = vscode.CompletionItemKind.Property;
@@ -303,7 +303,7 @@ export class SettingsDocument {
 			 */
 			if (languageOverrideRange && !languageOverrideRange.isEqual(languageOverridesRanges[0])) {
 				const languages = await vscode.languages.getLanguages();
-				const completionItems = [];
+				const completionItems: vscode.CompletionItem[] = [];
 				for (const language of languages) {
 					if (!donotSuggestLanguages.includes(language)) {
 						const item = new vscode.CompletionItem(`[${language}]`);

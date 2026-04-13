@@ -1,6 +1,44 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 历史服务接口】
+ *  本文件定义编辑器历史服务的核心接口，负责导航历史记录管理：
+ *
+ *  【核心职责】
+ *  1. 定义导航过滤器（GoFilter）- 控制导航类型
+ *  2. 定义导航范围（GoScope）- 控制导航范围
+ *  3. 提供 goBack/goForward 导航接口
+ *  4. 管理编辑器历史列表
+ *
+ *  【导航过滤器】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  GoFilter.NONE       - 所有导航（编辑+导航）            │
+ *  │  GoFilter.EDITS      - 仅编辑导致的导航                   │
+ *  │  GoFilter.NAVIGATION - 仅导航操作（如转到定义）          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【导航范围】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  GoScope.DEFAULT    - 所有编辑器组                       │
+ *  │  GoScope.EDITOR_GROUP - 仅活动编辑器组                   │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - goBack(filter, scope): 向后导航
+ *  - goForward(filter, scope): 向前导航
+ *  - getHistory(): 获取历史列表
+ *
+ *  【使用场景】
+ *  - 快捷键 Alt+Left/Right 导航
+ *  - 菜单 Go > Back / Forward
+ *  - 命令面板执行导航命令
+ *
+ *  【与 historyService.ts 的关系】
+ *  - 本文件定义接口
+ *  - historyService.ts 实现接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';

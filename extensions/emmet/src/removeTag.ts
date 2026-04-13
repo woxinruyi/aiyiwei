@@ -68,7 +68,7 @@ function getRangesToRemove(document: vscode.TextDocument, rootNode: HtmlFlatNode
 		}
 	}
 
-	const rangesToRemove = [];
+	const rangesToRemove: vscode.Range[] = [];
 	if (openTagRange) {
 		rangesToRemove.push(openTagRange);
 		if (closeTagRange) {

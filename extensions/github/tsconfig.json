@@ -3,8 +3,13 @@
 	"compilerOptions": {
 		"outDir": "./out",
 		"experimentalDecorators": true,
+		"types": ["node"],
 		"typeRoots": [
 			"./node_modules/@types"
+		],
+		"lib": [
+			"ES2020",
+			"DOM"
 		]
 	},
 	"include": [

@@ -102,7 +102,7 @@ function limitRanges(ranges: FoldingRange[], maxRanges: number) {
 			entries += n;
 		}
 	}
-	const result = [];
+	const result: FoldingRange[] = [];
 	for (let i = 0; i < ranges.length; i++) {
 		const level = nestingLevels[i];
 		if (typeof level === 'number') {

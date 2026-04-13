@@ -1,6 +1,43 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 平台检测模块】
+ *  本文件实现 VSCode/Void 的平台检测功能，识别运行环境和操作系统：
+ *
+ *  【核心职责】
+ *  1. 检测操作系统类型（Windows、macOS、Linux、iOS）
+ *  2. 检测运行环境（Native、Web、Electron）
+ *  3. 检测特殊环境（Linux Snap、CI、Mobile）
+ *  4. 管理语言区域设置（locale）
+ *  5. 提供平台相关的常量（USER_AGENT）
+ *
+ *  【平台类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  操作系统（OS）                                          │
+ *  │  ├─ isWindows - Windows 系统                           │
+ *  │  ├─ isMacintosh - macOS 系统                         │
+ *  │  ├─ isLinux - Linux 系统                             │
+ *  │  ├─ isLinuxSnap - Ubuntu Snap 环境                   │
+ *  │  └─ isIOS - iOS 系统                                   │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  运行环境（Environment）                               │
+ *  │  ├─ isNative - 原生应用（非 Web）                      │
+ *  │  ├─ isWeb - 浏览器环境                                 │
+ *  │  └─ isElectron - Electron 环境                         │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  特殊环境（Special）                                   │
+ *  │  ├─ isCI - 持续集成环境                                │
+ *  │  └─ isMobile - 移动设备                                │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用场景】
+ *  - 根据平台调整 UI（如 macOS 标题栏）
+ *  - 处理跨平台路径差异
+ *  - 应用平台特定的快捷键（Ctrl vs Cmd）
+ *  - 加载平台特定的本地化资源
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import * as nls from '../../nls.js';

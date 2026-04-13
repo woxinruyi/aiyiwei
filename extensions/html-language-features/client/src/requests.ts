@@ -16,7 +16,7 @@ export namespace FsReadDirRequest {
 }
 
 export function serveFileSystemRequests(client: BaseLanguageClient, runtime: Runtime): Disposable {
-	const disposables = [];
+	const disposables: Disposable[] = [];
 	disposables.push(client.onRequest(FsReadDirRequest.type, (uriString: string) => {
 		const uri = Uri.parse(uriString);
 		if (uri.scheme === 'file' && runtime.fileFs) {

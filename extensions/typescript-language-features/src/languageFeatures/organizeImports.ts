@@ -8,7 +8,7 @@ import { Command, CommandManager } from '../commands/commandManager';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { TelemetryReporter } from '../logging/telemetry';
 import { API } from '../tsServer/api';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import { OrganizeImportsMode } from '../tsServer/protocol/protocol.const';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';

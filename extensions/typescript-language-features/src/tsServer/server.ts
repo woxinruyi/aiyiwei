@@ -15,7 +15,7 @@ import { ServerResponse, ServerType, TypeScriptRequests } from '../typescriptSer
 import { Disposable } from '../utils/dispose';
 import { isWebAndHasSharedArrayBuffers } from '../utils/platform';
 import { OngoingRequestCanceller } from './cancellation';
-import type * as Proto from './protocol/protocol';
+import Proto from './protocol/protocol';
 import { EventName } from './protocol/protocol.const';
 import { TypeScriptVersionManager } from './versionManager';
 import { TypeScriptVersion } from './versionProvider';

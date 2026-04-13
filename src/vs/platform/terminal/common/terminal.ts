@@ -1,6 +1,58 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 终端平台服务接口】
+ *  本文件定义终端服务的平台层接口，提供跨平台的终端抽象：
+ *
+ *  【核心职责】
+ *  1. 提供终端配置项枚举（TerminalSettingId）
+ *  2. 定义终端进程接口（ITerminalChildProcess）
+ *  3. 支持终端能力系统（Capabilities）
+ *  4. 管理环境变量集合
+ *  5. 提供终端布局信息接口
+ *
+ *  【终端架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  平台层 (platform/terminal)                              │
+ *  │  - 终端基础类型定义                                      │
+ *  │  - 跨平台抽象接口                                        │
+ *  │  - 进程管理接口                                          │
+ *  │                                                          │
+ *  │  工作台层 (workbench/terminal)                          │
+ *  │  - 终端 UI 管理                                          │
+ *  │  - 终端服务实现                                          │
+ *  │  - 终端贡献点                                            │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【终端配置前缀】
+ *  - AutomationProfile: 自动化任务的终端配置
+ *  - DefaultProfile: 默认终端配置
+ *  - Profiles: 可用的终端配置文件
+ *
+ *  【核心接口】
+ *  - ITerminalChildProcess: 终端子进程接口
+ *  - IShellLaunchConfig: Shell 启动配置
+ *  - IProcessReadyEvent: 进程就绪事件
+ *  - IProcessPropertyMap: 进程属性映射
+ *
+ *  【终端能力（Capabilities）】
+ *  - 命令检测（Command Detection）
+ *  - 光标样式管理
+ *  - 缓冲区管理
+ *  - 鼠标支持
+ *
+ *  【使用场景】
+ *  - 创建和管理终端进程
+ *  - 配置终端启动参数
+ *  - 处理终端输出和输入
+ *  - 管理终端布局状态
+ *
+ *  【与 embedderTerminalService.ts 的关系】
+ *  - 提供底层终端类型定义
+ *  - 被工作台层终端服务使用
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Event } from '../../../base/common/event.js';

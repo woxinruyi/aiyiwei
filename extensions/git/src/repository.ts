@@ -2125,7 +2125,7 @@ export class Repository implements Disposable {
 	// Matches to a negative pattern (starting with '!') are filtered out.
 	// See also https://git-scm.com/docs/git-check-ignore#_output.
 	private parseIgnoreCheck(raw: string): string[] {
-		const ignored = [];
+		const ignored: string[] = [];
 		const elements = raw.split('\0');
 		for (let i = 0; i < elements.length; i += 4) {
 			const pattern = elements[i + 2];

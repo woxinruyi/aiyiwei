@@ -112,7 +112,7 @@ class RemoteSourceProviderQuickPick implements Disposable {
 export async function getRemoteSourceActions(model: Model, url: string): Promise<RemoteSourceAction[]> {
 	const providers = model.getRemoteProviders();
 
-	const remoteSourceActions = [];
+	const remoteSourceActions: RemoteSourceAction[] = [];
 	for (const provider of providers) {
 		const providerActions = await provider.getRemoteSourceActions?.(url);
 		if (providerActions?.length) {

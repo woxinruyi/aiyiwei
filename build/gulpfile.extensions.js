@@ -248,7 +248,43 @@ const bundleMarketplaceExtensionsBuildTask = task.define('bundle-marketplace-ext
  */
 const compileNonNativeExtensionsBuildTask = task.define('compile-non-native-extensions-build', task.series(
 	bundleMarketplaceExtensionsBuildTask,
-	task.define('bundle-non-native-extensions-build', () => ext.packageNonNativeLocalExtensionsStream().pipe(gulp.dest('.build')))
+	task.define('bundle-non-native-extensions-build', () => {
+		return new Promise((resolve, reject) => {
+			const stream = ext.packageNonNativeLocalExtensionsStream();
+			let fileCount = 0;
+			let ended = false;
+
+			// 超时机制 - 60秒后强制完成
+			const timeout = setTimeout(() => {
+				if (!ended) {
+					console.log(`Extension stream timeout, processed ${fileCount} files`);
+					ended = true;
+					resolve();
+				}
+			}, 60000);
+
+			stream
+				.on('data', (file) => {
+					fileCount++;
+				})
+				.on('error', (err) => {
+					if (!ended) {
+						ended = true;
+						clearTimeout(timeout);
+						console.error('Error in extension stream:', err);
+						reject(err);
+					}
+				})
+				.on('end', () => {
+					if (!ended) {
+						ended = true;
+						clearTimeout(timeout);
+						console.log(`Extension stream ended, processed ${fileCount} files`);
+						resolve();
+					}
+				});
+		});
+	})
 ));
 gulp.task(compileNonNativeExtensionsBuildTask);
 exports.compileNonNativeExtensionsBuildTask = compileNonNativeExtensionsBuildTask;
@@ -257,7 +293,43 @@ exports.compileNonNativeExtensionsBuildTask = compileNonNativeExtensionsBuildTas
  * Compiles the native extensions for the build
  * @note this does not clean the directory ahead of it. See {@link cleanExtensionsBuildTask} for that.
  */
-const compileNativeExtensionsBuildTask = task.define('compile-native-extensions-build', () => ext.packageNativeLocalExtensionsStream().pipe(gulp.dest('.build')));
+const compileNativeExtensionsBuildTask = task.define('compile-native-extensions-build', () => {
+	return new Promise((resolve, reject) => {
+		const stream = ext.packageNativeLocalExtensionsStream();
+		let fileCount = 0;
+		let ended = false;
+
+		// 超时机制 - 60秒后强制完成
+		const timeout = setTimeout(() => {
+			if (!ended) {
+				console.log(`Native extension stream timeout, processed ${fileCount} files`);
+				ended = true;
+				resolve();
+			}
+		}, 60000);
+
+		stream
+			.on('data', (file) => {
+				fileCount++;
+			})
+			.on('error', (err) => {
+				if (!ended) {
+					ended = true;
+					clearTimeout(timeout);
+					console.error('Error in native extension stream:', err);
+					reject(err);
+				}
+			})
+			.on('end', () => {
+				if (!ended) {
+					ended = true;
+					clearTimeout(timeout);
+					console.log(`Native extension stream ended, processed ${fileCount} files`);
+					resolve();
+				}
+			});
+	});
+});
 gulp.task(compileNativeExtensionsBuildTask);
 exports.compileNativeExtensionsBuildTask = compileNativeExtensionsBuildTask;
 

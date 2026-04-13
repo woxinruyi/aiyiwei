@@ -1,6 +1,55 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 配置服务接口】
+ *  本文件定义配置管理的核心接口，负责 VSCode/Void 的配置系统：
+ *
+ *  【核心职责】
+ *  1. 定义配置服务接口（IConfigurationService）
+ *  2. 管理配置层级（ConfigurationTarget）
+ *  3. 提供配置读取和更新方法
+ *  4. 处理配置变更事件
+ *
+ *  【配置层级】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  ConfigurationTarget.DEFAULT      - 默认值               │
+ *  │  内置的默认配置                                         │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.APPLICATION  - 应用级              │
+ *  │  命令行参数覆盖的配置                                     │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.USER         - 用户级              │
+ *  │  用户 settings.json 配置（全局）                         │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.USER_LOCAL   - 本地用户级          │
+ *  │  本地 settings.json 配置                                   │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.WORKSPACE    - 工作区级            │
+ *  │  工作区 settings.json 配置                                 │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.WORKSPACE_FOLDER - 文件夹级       │
+ *  │  工作区文件夹级别的配置                                     │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  ConfigurationTarget.MEMORY       - 内存级              │
+ *  │  临时内存配置，不持久化                                    │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - getValue(section, overrides?): 获取配置值
+ *  - updateValue(key, value, overrides?): 更新配置值
+ *  - onDidChangeConfiguration: 配置变更事件
+ *
+ *  【使用场景】
+ *  - 读取用户设置（字体大小、主题等）
+ *  - 更新工作区配置
+ *  - 监听配置变更（如语言设置变化）
+ *
+ *  【与 configurationService.ts 的关系】
+ *  - 本文件定义接口
+ *  - configurationService.ts 实现接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { assertNever } from '../../../base/common/assert.js';

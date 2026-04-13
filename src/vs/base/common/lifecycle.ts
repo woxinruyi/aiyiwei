@@ -1,6 +1,47 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 资源生命周期管理模块】
+ *  本文件实现 VSCode/Void 的资源生命周期管理系统，提供统一的资源释放机制：
+ *
+ *  【核心职责】
+ *  1. 定义 IDisposable 接口 - 可释放资源的标准接口
+ *  2. 实现 Disposable 类 - 基础可释放对象
+ *  3. 实现 DisposableStore - 批量管理多个可释放资源
+ *  4. 提供 toDisposable 函数 - 将函数转换为可释放对象
+ *  5. 支持引用计数（Reference Collection）
+ *  6. 可选的资源泄漏追踪功能
+ *
+ *  【核心概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  IDisposable 接口                                      │
+ *  │  ├─ dispose(): void 方法                              │
+ *  │  └─ 用于释放资源（监听器、定时器、文件句柄等）         │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Disposable 类                                         │
+ *  │  ├─ _register(d: IDisposable): IDisposable              │
+ *  │  └─ dispose(): 自动释放所有注册的资源                 │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  DisposableStore 类                                    │
+ *  │  ├─ 管理一组 IDisposable 对象                         │
+ *  │  ├─ add(d): 添加可释放对象                             │
+ *  │  └─ dispose(): 释放所有管理的资源                     │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用场景】
+ *  - 管理事件监听器订阅（订阅后返回 IDisposable）
+ *  - 清理定时器和 interval
+ *  - 释放文件句柄和网络连接
+ *  - 销毁编辑器组件和 DOM 元素
+ *  - 防止内存泄漏
+ *
+ *  【最佳实践】
+ *  - 有生命周期的类应继承 Disposable
+ *  - 使用 _register() 方法注册子资源
+ *  - 不再需要时调用 dispose()
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { compareBy, numberComparator } from './arrays.js';

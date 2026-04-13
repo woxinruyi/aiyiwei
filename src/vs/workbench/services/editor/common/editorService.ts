@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 编辑器服务接口】
+ *  本文件定义编辑器服务的核心接口，是整个 VSCode 编辑器系统的基石：
+ *
+ *  【核心职责】
+ *  1. 定义 IEditorService 接口 - 所有编辑器操作的统一入口
+ *  2. 管理编辑器组的打开、关闭、保存、切换
+ *  3. 支持多种编辑器类型：文本编辑器、差异编辑器、自定义编辑器
+ *  4. 提供编辑器查找和遍历功能
+ *
+ *  【关键常量】
+ *  - ACTIVE_GROUP (-1): 在当前活动组打开编辑器
+ *  - SIDE_GROUP (-2): 在活动组侧边打开编辑器（分屏）
+ *  - AUX_WINDOW_GROUP (-3): 在新辅助窗口打开编辑器
+ *
+ *  【编辑器架构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │                 IEditorService (接口)                    │
+ *  │                       ↑ 实现                             │
+ *  │               EditorService (实现类)                     │
+ *  │                                                          │
+ *  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+ *  │  │ 打开编辑器   │  │ 关闭编辑器   │  │ 保存/恢复编辑器  │  │
+ *  │  │ openEditor  │  │ closeEditor │  │ save/revert     │  │
+ *  │  └─────────────┘  └─────────────┘  └─────────────────┘  │
+ *  │                                                          │
+ *  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+ *  │  │ 查找编辑器   │  │ 遍历编辑器   │  │ 编辑器事件监听   │  │
+ *  │  │ findEditors │  │ editors     │  │ onDidActive...  │  │
+ *  │  └─────────────┘  └─────────────┘  └─────────────────┘  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用场景】
+ *  - 欢迎页面调用 openEditor(GettingStartedInput) 打开欢迎页
+ *  - 文件点击调用 openEditor({ resource: URI }) 打开文件
+ *  - Ctrl+P 调用 openEditor() 打开快速导航
+ *  - 保存时调用 save() 或 saveAll()
+ *
+ *  【与欢迎页面的关系】
+ *  - gettingStarted.ts 调用 editorService.openEditor() 显示欢迎页面
+ *  - GettingStartedInput 作为 EditorInput 传递给编辑器服务
+ *  - 编辑器服务将欢迎页面作为特殊编辑器渲染
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';

@@ -1,6 +1,50 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 独立代码编辑器】
+ *  本文件实现可独立使用的 Monaco 编辑器，是 VSCode 编辑器的核心组件：
+ *
+ *  【核心职责】
+ *  1. 创建独立编辑器实例（Standalone Code Editor）
+ *  2. 支持 Monaco Editor API（create, createDiffEditor）
+ *  3. 集成独立服务（StandaloneServices）
+ *  4. 支持 Web 环境使用（不依赖 Electron）
+ *
+ *  【架构设计】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │         StandaloneCodeEditor（独立编辑器）              │
+ *  │                      ↑ 依赖                             │
+ *  │           CodeEditorWidget（编辑器组件）                 │
+ *  │                      ↑ 依赖                             │
+ *  │           ViewLayer（渲染层）                           │
+ *  │                      ↑ 依赖                             │
+ *  │           TextModel（文本模型）                         │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【与 VSCode 的关系】
+ *  - 本文件是 Monaco Editor 的入口
+ *  - VSCode 编辑器内部使用相同的代码（CodeEditorWidget）
+ *  - Standalone 版本提供更简单的 API，适合 Web 集成
+ *
+ *  【核心方法】
+ *  - create(domElement, options, overrides): 创建编辑器实例
+ *  - createDiffEditor(domElement, options, overrides): 创建差异编辑器
+ *  - getOrCreateModel(uri, language, value): 获取/创建文本模型
+ *  - defineTheme(themeName, themeData): 定义自定义主题
+ *
+ *  【使用场景】
+ *  - 在浏览器中使用 Monaco Editor
+ *  - 第三方网站集成代码编辑功能
+ *  - 在线代码编辑器（如 CodeSandbox、StackBlitz）
+ *  - VSCode 内部的编辑器也是基于此
+ *
+ *  【独立服务】
+ *  - StandaloneKeybindingService: 独立快捷键服务
+ *  - StandaloneThemeService: 独立主题服务
+ *  - StandaloneCodeEditorService: 独立编辑器服务
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import * as aria from '../../../base/browser/ui/aria/aria.js';

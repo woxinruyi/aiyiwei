@@ -8,7 +8,7 @@ import { DocumentSelector } from '../configuration/documentSelector';
 import { LanguageDescription } from '../configuration/languageDescription';
 import { TelemetryReporter } from '../logging/telemetry';
 import { API } from '../tsServer/api';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import { Location, Position } from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import { Disposable } from '../utils/dispose';

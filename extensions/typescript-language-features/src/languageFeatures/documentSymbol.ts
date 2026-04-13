@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { DocumentSelector } from '../configuration/documentSelector';
 import { CachedResponse } from '../tsServer/cachedResponse';
 import { parseKindModifier } from '../tsServer/protocol/modifiers';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as PConst from '../tsServer/protocol/protocol.const';
 import * as typeConverters from '../typeConverters';
 import { ITypeScriptServiceClient } from '../typescriptService';
@@ -75,7 +75,7 @@ class TypeScriptDocumentSymbolProvider implements vscode.DocumentSymbolProvider 
 			const range = typeConverters.Range.fromTextSpan(span);
 			const symbolInfo = TypeScriptDocumentSymbolProvider.convertSymbol(item, range);
 
-			for (const child of children) {
+			for (const child of children as unknown as Proto.NavigationTree[]) {
 				if (child.spans.some(span => !!range.intersection(typeConverters.Range.fromTextSpan(span)))) {
 					const includedChild = TypeScriptDocumentSymbolProvider.convertNavTree(resource, symbolInfo.children, child);
 					shouldInclude = shouldInclude || includedChild;

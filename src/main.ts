@@ -1,6 +1,40 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 应用主入口】
+ *  本文件是 Void 应用的真正入口点（Node.js 层），负责：
+ *
+ *  【启动流程】
+ *  1. 性能标记：记录启动时间点（performance.mark）
+ *  2. 配置便携模式：configurePortable() - 支持从 U 盘等便携设备运行
+ *  3. 解析命令行参数：parseCLIArgs() - 处理 --sandbox, --disable-gpu 等参数
+ *  4. 配置沙箱：根据参数决定是否启用 Chromium 沙箱
+ *  5. 解析 NLS 配置：resolveNLSConfiguration() - 多语言支持
+ *  6. 启动 ESM 加载器：bootstrapESM() - 加载 ES 模块主代码
+ *  7. 进入主进程逻辑：vs/code/electron-main/main.ts
+ *
+ *  【关键参数处理】
+ *  - --sandbox: 启用 Chromium 沙箱（默认启用，除非显式禁用）
+ *  - --no-sandbox: 禁用沙箱（用于某些 Linux 环境）
+ *  - --disable-gpu: 禁用 GPU 加速
+ *  - --locale: 设置界面语言
+ *  - --user-data-dir: 指定用户数据目录
+ *
+ *  【进程关系】
+ *  ┌───────────┐    bootstrapESM()    ┌──────────────────┐
+ *  │ main.ts   │ ───────────────────→ │ electron-main/   │
+ *  │ (本文件)   │                      │ main.ts          │
+ *  │ Node.js  │                      │ Electron Main    │
+ *  └───────────┘                      └──────────────────┘
+ *
+ *  【依赖模块】
+ *  - bootstrap-node.ts: Node.js 环境配置
+ *  - bootstrap-esm.ts: ES 模块加载器
+ *  - bootstrap-meta.ts: 产品元数据（product.json）
+ *  - vs/base/node/nls.ts: 本地化配置解析
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';

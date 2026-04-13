@@ -1,6 +1,46 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 窗口服务接口】
+ *  本文件定义窗口管理的核心接口和类型，负责窗口的创建、配置和状态管理：
+ *
+ *  【核心职责】
+ *  1. 定义窗口最小尺寸限制
+ *  2. 定义窗口配置接口（IWindowSettings）
+ *  3. 定义窗口状态接口（IWindowState）
+ *  4. 支持远程窗口配置
+ *  5. 管理窗口打开选项
+ *
+ *  【窗口配置】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  WindowMinimumSize - 窗口最小尺寸                       │
+ *  │  - WIDTH: 400px（普通宽度）                              │
+ *  │  - WIDTH_WITH_VERTICAL_PANEL: 600px（带垂直面板）        │
+ *  │  - HEIGHT: 270px（最小高度）                             │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IWindowState: 窗口状态（位置、大小、是否最大化）
+ *  - IOpenWindowOptions: 打开窗口选项
+ *  - IAddFoldersRequest: 添加文件夹请求
+ *  - IPoint/IRectangle: 几何类型
+ *
+ *  【窗口类型】
+ *  - 本地窗口：file:// 协议
+ *  - 远程窗口：vscode-remote:// 协议
+ *  - 空窗口：无工作区
+ *
+ *  【使用场景】
+ *  - 创建新窗口时配置尺寸和位置
+ *  - 恢复窗口状态（上次关闭时的位置和大小）
+ *  - 打开文件夹/工作区时指定窗口
+ *
+ *  【与欢迎页面的关系】
+ *  - 窗口配置影响欢迎页面的显示区域
+ *  - 窗口大小限制确保欢迎页面有足够显示空间
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { VSBuffer } from '../../../base/common/buffer.js';
@@ -229,7 +269,7 @@ export function getTitleBarStyle(configurationService: IConfigurationService): T
 		}
 	}
 
-	return TitlebarStyle.CUSTOM; // default to custom on all OS
+	return TitlebarStyle.NATIVE; // default to native on all OS
 }
 
 export function getWindowControlsStyle(configurationService: IConfigurationService): WindowControlsStyle {

@@ -1,6 +1,40 @@
 /*--------------------------------------------------------------------------------------
  *  Copyright 2025 Glass Devtools, Inc. All rights reserved.
  *  Licensed under the Apache License, Version 2.0. See LICENSE.txt for more information.
+ *
+ *  【业务逻辑说明 - Void 模块注册中心】
+ *  本文件是 Void AI 功能的模块注册中心（Contribution Registry），负责：
+ *
+ *  【核心职责】
+ *  1. 注册所有 Void 相关的服务和组件到 VSCode 工作台
+ *  2. 按功能模块组织导入，清晰划分职责边界
+ *  3. 作为 Void 功能的入口点，被 workbench.ts 加载
+ *
+ *  【功能模块清单】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  editCodeService.js       - 代码编辑服务（Apply/Fast Apply）   │
+ *  │  sidebarActions.js        - 侧边栏快捷键（Ctrl+L）              │
+ *  │  sidebarPane.js           - 侧边栏面板 UI                      │
+ *  │  quickEditActions.js      - 快速编辑（Ctrl+K）                 │
+ *  │  autocompleteService.js   - AI 自动补全                       │
+ *  │  voidSettingsPane.js      - Void 设置面板                     │
+ *  │  voidUpdateActions.js     - 自动更新功能                      │
+ *  │  toolsService.js          - AI 工具调用（文件操作等）           │
+ *  │  terminalToolService.js   - 终端工具集成                       │
+ *  │  threadHistoryService.js  - 对话历史管理                       │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【注册机制】
+ *  - 使用 VSCode 的 Contribution Registry 机制
+ *  - 每个导入的文件内部调用 registerSingleton() 或 registerWorkbenchContribution()
+ *  - 服务通过依赖注入（DI）容器提供给其他组件使用
+ *
+ *  【依赖关系】
+ *  - 依赖于 common/ 层的基础类型和服务
+ *  - 依赖于 platform/ 层的基础设施
+ *  - 被 workbench.ts 间接加载
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------*/
 
 

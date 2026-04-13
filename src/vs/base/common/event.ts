@@ -1,6 +1,51 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 事件系统基础模块】
+ *  本文件实现 VSCode/Void 的事件系统基础架构，提供观察者模式的事件订阅和触发机制：
+ *
+ *  【核心职责】
+ *  1. 定义 Event<T> 接口 - 事件类型定义
+ *  2. 实现 Emitter 类 - 事件发射器
+ *  3. 提供事件工具函数（Event.debounce, Event.filter, Event.map 等）
+ *  4. 支持事件快照（Event.snapshot）
+ *  5. 事件防抖动和节流
+ *
+ *  【核心概念】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  Event<T> - 事件类型                                   │
+ *  │  ├─ 是一个函数类型                                     │
+ *  │  ├─ 参数: listener, thisArgs, disposables              │
+ *  │  └─ 返回: IDisposable（用于取消订阅）                    │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  Emitter<T> - 事件发射器                               │
+ *  │  ├─ event: Event<T> 属性（对外暴露）                   │
+ *  │  ├─ fire(data): 触发事件                               │
+ *  │  ├─ dispose(): 清理所有监听器                          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【使用示例】
+ *  ```
+ *  const emitter = new Emitter<string>();
+ *  const disposable = emitter.event((value) => console.log(value));
+ *  emitter.fire('hello');  // 触发事件
+ *  disposable.dispose();    // 取消订阅
+ *  ```
+ *
+ *  【常用工具函数】
+ *  - Event.debounce(event, delay): 防抖
+ *  - Event.filter(event, predicate): 过滤
+ *  - Event.map(event, mapper): 映射
+ *  - Event.any(...events): 合并多个事件
+ *
+ *  【使用场景】
+ *  - 编辑器内容变更事件
+ *  - 文件系统监听事件
+ *  - 配置变更事件
+ *  - UI 交互事件
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from './cancellation.js';

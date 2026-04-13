@@ -1,6 +1,45 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 编辑器服务实现】
+ *  本文件实现编辑器服务的浏览器端逻辑，负责管理编辑器实例和编辑器组：
+ *
+ *  【核心职责】
+ *  1. 管理编辑器生命周期（打开、关闭、保存）
+ *  2. 处理编辑器组管理（分屏、移动、复制）
+ *  3. 实现编辑器查找和导航
+ *  4. 处理文件变更事件（重命名、删除）
+ *  5. 支持编辑器预览模式
+ *
+ *  【与 common/editorService.ts 的关系】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  IEditorService（接口定义）                            │
+ *  │       ↑ 实现                                           │
+ *  │  EditorService（本文件-浏览器端实现）                  │
+ *  │       ↑ 依赖                                           │
+ *  │  EditorServiceImpl（编辑器服务实现类）                 │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心方法】
+ *  - openEditor(input, options): 打开编辑器
+ *  - closeEditor(editor, options): 关闭编辑器
+ *  - save(editors, options): 保存编辑器
+ *  - revert(editors, options): 恢复编辑器
+ *  - getEditors(order): 获取编辑器列表
+ *
+ *  【事件系统】
+ *  - onDidActiveEditorChange: 活动编辑器变更
+ *  - onDidVisibleEditorsChange: 可见编辑器变更
+ *  - onDidCloseEditor: 编辑器关闭
+ *
+ *  【使用场景】
+ *  - 用户点击文件打开编辑器
+ *  - 使用快捷键切换编辑器
+ *  - 分屏编辑文件
+ *  - 保存或关闭所有编辑器
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';

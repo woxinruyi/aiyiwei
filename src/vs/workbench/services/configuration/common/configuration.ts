@@ -1,6 +1,39 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作台配置服务常量】
+ *  本文件定义工作台配置服务的常量和类型，用于管理 VSCode/Void 的配置层级：
+ *
+ *  【核心职责】
+ *  1. 定义配置文件夹名称（.vscode）
+ *  2. 定义配置文件路径（settings.json, launch.json, tasks.json）
+ *  3. 定义配置模式 ID（Schema IDs）
+ *  4. 定义配置作用域常量（Scopes）
+ *  5. 区分用户和工作区的独立配置
+ *
+ *  【配置文件夹结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  .vscode/ - 工作区配置文件夹                           │
+ *  │  ├─ settings.json - 工作区设置                        │
+ *  │  ├─ launch.json - 调试配置                            │
+ *  │  ├─ tasks.json - 任务配置                            │
+ *  │  └─ mcp.json - Model Context Protocol 配置             │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【配置作用域（Scopes）】
+ *  - APPLICATION_SCOPES: 应用级配置
+ *  - PROFILE_SCOPES: 用户配置档配置
+ *  - LOCAL_MACHINE_SCOPES: 本地机器配置
+ *  - REMOTE_MACHINE_SCOPES: 远程机器配置
+ *  - WORKSPACE_SCOPES: 工作区配置
+ *  - FOLDER_SCOPES: 文件夹配置
+ *
+ *  【与 platform/configuration 的关系】
+ *  - 本文件定义工作台特定的配置常量
+ *  - platform/configuration 定义通用配置接口
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { ConfigurationScope } from '../../../../platform/configuration/common/configurationRegistry.js';

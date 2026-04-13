@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fileSchemes from '../configuration/fileSchemes';
 import { doesResourceLookLikeATypeScriptFile } from '../configuration/languageDescription';
-import type * as Proto from '../tsServer/protocol/protocol';
+import Proto from '../tsServer/protocol/protocol';
 import * as typeConverters from '../typeConverters';
 import { ClientCapability, ITypeScriptServiceClient } from '../typescriptService';
 import { Delayer } from '../utils/async';

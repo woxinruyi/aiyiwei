@@ -1,6 +1,37 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 欢迎页面样式】
+ *  本文件定义欢迎页面的 CSS 样式，控制欢迎页面的外观和布局：
+ *
+ *  【核心职责】
+ *  1. 定义欢迎页面容器样式
+ *  2. 设置标题、内容区域样式
+ *  3. 定义开始项和教程卡片样式
+ *  4. 设置响应式布局（适配不同窗口大小）
+ *  5. 定义语言选择按钮样式
+ *
+ *  【样式结构】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  gettingStartedContainer - 主容器                      │
+ *  │  ├─ header - 标题区域                                  │
+ *  │  ├─ gettingStartedCategoriesContainer - 内容网格       │
+ *  │  │   ├─ gettingStartedCategories - 分类/开始项         │
+ *  │  │   └─ gettingStartedWalkthrough - 教程区域          │
+ *  │  └─ footer - 底部区域                                  │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【响应式布局】
+ *  - width-constrained: 宽度受限时隐藏 header
+ *  - height-constrained: 高度受限时调整布局
+ *
+ *  【与 gettingStarted.ts 的关系】
+ *  - TypeScript 生成 DOM 结构
+ *  - CSS 控制样式和布局
+ *  - 类名对应 DOM 中的 className
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 .file-icons-enabled .show-file-icons .vscode_getting_started_page-name-file-icon.file-icon::before {
@@ -46,6 +77,29 @@
 	font-weight: normal;
 	font-size: 2.7em;
 	white-space: nowrap;
+}
+
+.monaco-workbench .part.editor > .content .gettingStartedContainer .language-button {
+	margin-left: 10px;
+	padding: 4px 8px;
+	border: 1px solid var(--vscode-button-secondaryForeground);
+	border-radius: 3px;
+	background: var(--vscode-button-secondaryBackground);
+	color: var(--vscode-button-secondaryForeground);
+	cursor: pointer;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+}
+
+.monaco-workbench .part.editor > .content .gettingStartedContainer .language-button:hover {
+	background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.monaco-workbench .part.editor > .content .gettingStartedContainer .language-button .codicon {
+	font-size: 14px;
 }
 
 .monaco-workbench .part.editor > .content .gettingStartedContainer .title {
@@ -172,6 +226,10 @@
 	grid-area: footer;
 	justify-self: center;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
 }
 
 .monaco-workbench .part.editor > .content .gettingStartedContainer .gettingStartedSlideCategories .categories-slide-container {

@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { TypeScriptServiceConfiguration } from './configuration/configuration';
 import { API } from './tsServer/api';
-import type * as Proto from './tsServer/protocol/protocol';
+import type Proto from './tsServer/protocol/protocol';
 import { ITypeScriptServiceClient, ServerResponse } from './typescriptService';
 import { nulToken } from './utils/cancellation';
 

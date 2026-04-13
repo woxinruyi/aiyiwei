@@ -1,6 +1,22 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明】
+ *  本文件定义欢迎页面的编辑器输入模型，负责：
+ *  1. 定义欢迎页面的状态和选项（分类、步骤、显示配置）
+ *  2. 提供编辑器输入的序列化和反序列化
+ *  3. 与 workbench.action.openWalkthrough 命令关联
+ *  4. 支持启动页配置（workbench.startupEditor）
+ *  5. 使用 URI 方案 'vscode_getting_started_page' 识别页面
+ *
+ *  【核心概念】
+ *  - EditorInput: 编辑器输入的抽象基类
+ *  - GettingStartedEditorOptions: 欢迎页面选项配置
+ *  - showWelcome: 是否显示欢迎内容
+ *  - selectedCategory/selectedStep: 当前选中的教程
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import './media/gettingStarted.css';

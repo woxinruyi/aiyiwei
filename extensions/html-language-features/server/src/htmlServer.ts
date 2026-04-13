@@ -167,7 +167,7 @@ export function startServer(connection: Connection, runtime: RuntimeEnvironment)
 		});
 
 		function getClientCapability<T>(name: string, def: T) {
-			const keys = name.split('.');
+			const keys: string[] = name.split('.');
 			let c: any = params.capabilities;
 			for (let i = 0; c && i < keys.length; i++) {
 				if (!c.hasOwnProperty(keys[i])) {
@@ -225,7 +225,7 @@ export function startServer(connection: Connection, runtime: RuntimeEnvironment)
 			connection.onNotification(DidChangeWorkspaceFoldersNotification.type, e => {
 				const toAdd = e.event.added;
 				const toRemove = e.event.removed;
-				const updatedFolders = [];
+				const updatedFolders: WorkspaceFolder[] = [];
 				if (workspaceFolders) {
 					for (const folder of workspaceFolders) {
 						if (!toRemove.some(r => r.uri === folder.uri) && !toAdd.some(r => r.uri === folder.uri)) {

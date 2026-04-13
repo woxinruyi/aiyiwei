@@ -1,6 +1,54 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 输出服务接口】
+ *  本文件定义输出面板的核心接口和常量，负责管理扩展和系统的输出日志：
+ *
+ *  【核心职责】
+ *  1. 定义输出编辑器的 MIME 类型和模式 ID
+ *  2. 定义输出视图的唯一标识符
+ *  3. 提供输出相关的上下文键（Context Keys）
+ *  4. 支持日志级别过滤和滚动锁定
+ *  5. 管理多个输出通道（Output Channels）
+ *
+ *  【输出类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  普通输出（Output）                                     │
+ *  │  - 扩展的输出通道                                        │
+ *  │  - MIME: text/x-code-output                              │
+ *  │  - Mode ID: Log                                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  日志输出（Log Output）                                 │
+ *  │  - 系统日志文件                                          │
+ *  │  - MIME: text/x-code-log-output                          │
+ *  │  - Mode ID: log                                          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【上下文键】
+ *  - CONTEXT_IN_OUTPUT: 是否在输出面板
+ *  - CONTEXT_ACTIVE_FILE_OUTPUT: 是否是活动文件输出
+ *  - CONTEXT_ACTIVE_LOG_FILE_OUTPUT: 是否是日志文件输出
+ *  - CONTEXT_ACTIVE_OUTPUT_LEVEL: 当前日志级别
+ *  - CONTEXT_OUTPUT_SCROLL_LOCK: 滚动锁定状态
+ *
+ *  【日志级别过滤】
+ *  - SHOW_TRACE_FILTER_CONTEXT: 显示 Trace 级别
+ *  - SHOW_DEBUG_FILTER_CONTEXT: 显示 Debug 级别
+ *  - SHOW_INFO_FILTER_CONTEXT: 显示 Info 级别
+ *  - SHOW_WARNING_FILTER_CONTEXT: 显示 Warning 级别
+ *
+ *  【使用场景】
+ *  - 查看扩展日志输出
+ *  - 查看 Git 操作日志
+ *  - 查看语言服务器日志
+ *  - 调试时查看详细日志
+ *
+ *  【与 workbench.panel.output 的关系】
+ *  - 输出面板 ID: workbench.panel.output
+ *  - 位于底部面板区域
+ *
+ *  【修改历史】2026-04-02: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { Event, Emitter } from '../../../../base/common/event.js';

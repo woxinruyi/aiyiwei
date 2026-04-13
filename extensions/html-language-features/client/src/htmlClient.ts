@@ -188,7 +188,7 @@ async function startClientWithParticipants(languageParticipants: LanguagePartici
 			}
 		}
 	};
-	clientOptions.outputChannel = outputChannel;
+	clientOptions.outputChannel = outputChannel as any;
 
 	// Create the language client and start the client.
 	const client = newLanguageClient('html', languageServerDescription, clientOptions);

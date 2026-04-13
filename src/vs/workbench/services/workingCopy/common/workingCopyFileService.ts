@@ -1,6 +1,60 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *
+ *  【业务逻辑说明 - 工作副本文件服务】
+ *  本文件实现工作副本文件服务，协调文件操作与工作副本管理：
+ *
+ *  【核心职责】
+ *  1. 协调文件操作（创建、删除、移动、复制）与工作副本
+ *  2. 管理文件操作参与者（Before/After 钩子）
+ *  3. 支持撤销/重做文件操作
+ *  4. 处理工作副本保存参与者
+ *  5. 维护 Source-Target 映射关系
+ *
+ *  【文件操作类型】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  CREATE  - 创建新文件                                    │
+ *  │  DELETE  - 删除文件                                      │
+ *  │  MOVE    - 移动/重命名文件                              │
+ *  │  COPY    - 复制文件                                      │
+ *  │  IMPORT  - 导入文件                                      │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【操作参与者】
+ *  ┌─────────────────────────────────────────────────────────┐
+ *  │  WorkingCopyFileOperationParticipant                    │
+ *  │  - 在文件操作前执行（如验证、备份）                     │
+ *  │  - 异步等待完成                                          │
+ *  ├─────────────────────────────────────────────────────────┤
+ *  │  StoredFileWorkingCopySaveParticipant                 │
+ *  │  - 在保存时执行（如格式化、修复导入）                   │
+ *  │  - 支持进度报告                                          │
+ *  └─────────────────────────────────────────────────────────┘
+ *
+ *  【核心接口】
+ *  - IWorkingCopyFileService: 服务接口
+ *  - SourceTargetPair: 源-目标对
+ *  - IFileOperationUndoRedoInfo: 撤销/重做信息
+ *
+ *  【核心方法】
+ *  - create(resource): 创建文件
+ *  - delete(resources): 删除文件
+ *  - move(resource, target): 移动文件
+ *  - copy(resource, target): 复制文件
+ *  - addFileOperationParticipant(): 添加操作参与者
+ *
+ *  【使用场景】
+ *  - 资源管理器的文件操作
+ *  - 编辑器保存时触发参与者
+ *  - 撤销/重做文件操作
+ *  - 批量文件操作
+ *
+ *  【与 IFileService 的关系】
+ *  - 使用底层文件服务执行实际文件操作
+ *  - 在文件操作前后添加工作副本协调逻辑
+ *
+ *  【修改历史】2026-04-03: 添加业务逻辑注释
  *--------------------------------------------------------------------------------------------*/
 
 import { createDecorator, IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
